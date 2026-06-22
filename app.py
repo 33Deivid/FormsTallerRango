@@ -122,7 +122,7 @@ if 'show_admin' not in st.session_state:
 col1, col2 = st.columns([3, 1])
 
 with col1:
-    st.markdown("<h1 class='main-title'>📊 Estimador de Percentiles de Costos</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-title'>📊 Estimador de Percentiles de Costos y Plazo</h1>", unsafe_allow_html=True)
 
 with col2:
     # Botón para panel de control
@@ -467,24 +467,6 @@ with tabs[-1]:
         st.dataframe(stats_df, use_container_width=True, hide_index=True)
         
         st.divider()
-        
-        # ========== TABLA DE DATOS COMPLETOS ==========
-        st.write("### 📊 Datos Detallados")
-        
-        st.dataframe(
-            df_proyecto,
-            use_container_width=True,
-            hide_index=True
-        )
-        
-        # Descargar datos
-        csv = df_proyecto.to_csv(index=False)
-        st.download_button(
-            label=f"📥 Descargar datos ({proyecto_seleccionado})",
-            data=csv,
-            file_name=f"estimaciones_{proyecto_id}.csv",
-            mime="text/csv"
-        )
 
 # ========== PANEL DE CONTROL (Admin) ==========
 if st.session_state.show_admin:
@@ -539,7 +521,7 @@ if st.session_state.show_admin:
 st.divider()
 st.markdown("""
     <div style='text-align: center; color: gray; font-size: 0.9em; margin-top: 30px;'>
-        Estimador de Percentiles creado con ❤️ usando Streamlit | 
+        Estimador de Percentiles creado usando Streamlit | 
         Comparte el link para recopilar estimaciones en tiempo real
     </div>
 """, unsafe_allow_html=True)
