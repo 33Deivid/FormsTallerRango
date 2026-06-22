@@ -1,0 +1,28 @@
+{
+  "proyectos": [
+    {
+      "id": "proyecto_1",
+      "nombre": "Proyecto A",
+      "descripcion": "Estimación de costos - Proyecto A",
+      "p50": 150,
+      "activo": true,
+      "orden": 1
+    },
+    {
+      "id": "proyecto_2",
+      "nombre": "Proyecto B",
+      "descripcion": "Estimación de costos - Proyecto B",
+      "p50": 150,
+      "activo": false,
+      "orden": 2
+    },
+    {
+      "id": "proyecto_3",
+      "nombre": "Proyecto C",
+      "descripcion": "Estimación de costos - Proyecto C",
+      "p50": 150,
+      "activo": false,
+      "orden": 3
+    }
+  ]
+}
