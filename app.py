@@ -49,6 +49,7 @@ st.markdown("""
 
 CONFIG_FILE = "config_proyectos.json"
 DATA_FILE = "respuestas_percentiles.csv"
+ADMIN_PASSWORD = "Hola1234"
 
 def load_config():
     """Carga la configuración de proyectos"""
@@ -116,18 +117,57 @@ if 'form_submitted' not in st.session_state:
     st.session_state.form_submitted = False
 if 'show_admin' not in st.session_state:
     st.session_state.show_admin = False
+if 'admin_authenticated' not in st.session_state:
+    st.session_state.admin_authenticated = False
 
 # ========== LAYOUT PRINCIPAL ==========
 
 col1, col2 = st.columns([3, 1])
 
 with col1:
-    st.markdown("<h1 class='main-title'>📊 Estimador de Percentiles de Costos y Plazo</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-title'>📊 Estimador de Percentiles de Costos</h1>", unsafe_allow_html=True)
 
 with col2:
     # Botón para panel de control
     if st.button("⚙️ Panel Control", key="admin_btn"):
         st.session_state.show_admin = not st.session_state.show_admin
+
+# ========== MODAL DE AUTENTICACIÓN ==========
+if st.session_state.show_admin and not st.session_state.admin_authenticated:
+    with st.container():
+        st.divider()
+        col_centro = st.columns([1, 2, 1])
+        
+        with col_centro[1]:
+            st.markdown("### 🔐 Acceso al Panel de Control")
+            st.write("Ingresa la contraseña para continuar:")
+            
+            password_input = st.text_input(
+                "Contraseña",
+                type="password",
+                placeholder="Ingresa tu contraseña",
+                key="password_input"
+            )
+            
+            col_btn1, col_btn2 = st.columns(2)
+            
+            with col_btn1:
+                if st.button("✅ Verificar", use_container_width=True):
+                    if password_input == ADMIN_PASSWORD:
+                        st.session_state.admin_authenticated = True
+                        st.success("✅ Contraseña correcta. Acceso concedido.")
+                        st.rerun()
+                    else:
+                        st.error("❌ Contraseña incorrecta. Intenta nuevamente.")
+                        st.session_state.show_admin = False
+            
+            with col_btn2:
+                if st.button("❌ Cancelar", use_container_width=True):
+                    st.session_state.show_admin = False
+                    st.session_state.admin_authenticated = False
+                    st.rerun()
+    
+    st.stop()
 
 # Cargar configuración
 config = load_config()
@@ -467,13 +507,31 @@ with tabs[-1]:
         st.dataframe(stats_df, use_container_width=True, hide_index=True)
         
         st.divider()
+        
+        # ========== TABLA DE DATOS COMPLETOS ==========
+        st.write("### 📊 Datos Detallados")
+        
+        st.dataframe(
+            df_proyecto,
+            use_container_width=True,
+            hide_index=True
+        )
+        
+        # Descargar datos
+        csv = df_proyecto.to_csv(index=False)
+        st.download_button(
+            label=f"📥 Descargar datos ({proyecto_seleccionado})",
+            data=csv,
+            file_name=f"estimaciones_{proyecto_id}.csv",
+            mime="text/csv"
+        )
 
 # ========== PANEL DE CONTROL (Admin) ==========
-if st.session_state.show_admin:
+if st.session_state.show_admin and st.session_state.admin_authenticated:
     st.divider()
     st.markdown("---")
     st.write("## ⚙️ Panel de Control de Proyectos")
-    st.warning("⚠️ Este panel es solo para administradores")
+    st.success("✅ Acceso de administrador activo")
     
     with st.expander("📋 Gestionar Proyectos", expanded=True):
         config = load_config()
@@ -516,12 +574,19 @@ if st.session_state.show_admin:
                     save_config(config)
                     st.success(f"✅ P50 actualizado")
                     st.rerun()
+    
+    # Botón para cerrar sesión
+    if st.button("🚪 Cerrar sesión de admin", use_container_width=True):
+        st.session_state.admin_authenticated = False
+        st.session_state.show_admin = False
+        st.success("✅ Sesión cerrada")
+        st.rerun()
 
 # Footer
 st.divider()
 st.markdown("""
     <div style='text-align: center; color: gray; font-size: 0.9em; margin-top: 30px;'>
-        Estimador de Percentiles creado usando Streamlit | 
+        Estimador de Percentiles creado con ❤️ usando Streamlit | 
         Comparte el link para recopilar estimaciones en tiempo real
     </div>
 """, unsafe_allow_html=True)
