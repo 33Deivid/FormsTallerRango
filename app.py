@@ -125,7 +125,7 @@ if 'admin_authenticated' not in st.session_state:
 col1, col2 = st.columns([3, 1])
 
 with col1:
-    st.markdown("<h1 class='main-title'>📊 Estimador de Percentiles de Costos</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-title'>📊 Estimador de Percentiles</h1>", unsafe_allow_html=True)
 
 with col2:
     # Botón para panel de control
@@ -179,14 +179,18 @@ if not proyectos_activos:
 
 # ========== TABS PRINCIPALES ==========
 
-tabs = st.tabs([f"✍️ {p['nombre']}" for p in proyectos_activos] + ["📊 Análisis Completo"])
+tabs = st.tabs([f"✍️ {p['nombre']} ({p['subtipo']})" for p in proyectos_activos] + ["📊 Análisis Completo"])
 
 # Tabs de formularios por proyecto
 for idx, proyecto in enumerate(proyectos_activos):
     with tabs[idx]:
-        st.write(f"### {proyecto['nombre']}")
-        st.write(f"_{proyecto['descripcion']}_")
-        st.info(f"📌 **P50 (Mediana esperada): {proyecto['p50']} KUSD**")
+        # Título dinámico según tipo
+        titulo_tipo = "Estimación de Costos" if proyecto['tipo'] == 'costos' else "Estimación de Plazos"
+        unidad = proyecto['unidad']
+        
+        st.write(f"### {proyecto['nombre']} - {proyecto['subtipo']}")
+        st.write(f"_{titulo_tipo} - {proyecto['nombre']}_")
+        st.info(f"📌 **P50 (Mediana esperada): {proyecto['p50']} {unidad}**")
         
         with st.form(f"form_{proyecto['id']}"):
             col1, col2 = st.columns(2)
@@ -207,7 +211,7 @@ for idx, proyecto in enumerate(proyectos_activos):
                 pass  # Espacio para balance
             
             st.divider()
-            st.write("### Estimaciones de Costo (KUSD)")
+            st.write(f"### Estimaciones de {titulo_tipo} ({unidad})")
             st.write("Proporciona tu estimación para cada percentil:")
             
             # Crear dos columnas para los inputs
@@ -221,9 +225,9 @@ for idx, proyecto in enumerate(proyectos_activos):
                     min_value=0,
                     max_value=proyecto['p50'],
                     value=int(proyecto['p50'] * 0.3),
-                    step=5,
+                    step=1 if proyecto['tipo'] == 'plazos' else 5,
                     key=f"p1_{proyecto['id']}",
-                    help=f"Máximo: {proyecto['p50']} KUSD"
+                    help=f"Máximo: {proyecto['p50']} {unidad}"
                 )
                 
                 p10 = st.number_input(
@@ -231,9 +235,9 @@ for idx, proyecto in enumerate(proyectos_activos):
                     min_value=0,
                     max_value=proyecto['p50'],
                     value=int(proyecto['p50'] * 0.6),
-                    step=5,
+                    step=1 if proyecto['tipo'] == 'plazos' else 5,
                     key=f"p10_{proyecto['id']}",
-                    help=f"Máximo: {proyecto['p50']} KUSD"
+                    help=f"Máximo: {proyecto['p50']} {unidad}"
                 )
             
             with col2:
@@ -244,9 +248,9 @@ for idx, proyecto in enumerate(proyectos_activos):
                     min_value=proyecto['p50'],
                     max_value=int(proyecto['p50'] * 3),
                     value=int(proyecto['p50'] * 1.5),
-                    step=5,
+                    step=1 if proyecto['tipo'] == 'plazos' else 5,
                     key=f"p90_{proyecto['id']}",
-                    help=f"Mínimo: {proyecto['p50']} KUSD"
+                    help=f"Mínimo: {proyecto['p50']} {unidad}"
                 )
                 
                 p99 = st.number_input(
@@ -254,9 +258,9 @@ for idx, proyecto in enumerate(proyectos_activos):
                     min_value=proyecto['p50'],
                     max_value=int(proyecto['p50'] * 5),
                     value=int(proyecto['p50'] * 2.5),
-                    step=5,
+                    step=1 if proyecto['tipo'] == 'plazos' else 5,
                     key=f"p99_{proyecto['id']}",
-                    help=f"Mínimo: {proyecto['p50']} KUSD"
+                    help=f"Mínimo: {proyecto['p50']} {unidad}"
                 )
             
             # Validaciones visuales
@@ -295,7 +299,7 @@ for idx, proyecto in enumerate(proyectos_activos):
             )
             
             submitted = st.form_submit_button(
-                f"📤 Enviar estimaciones para {proyecto['nombre']}", 
+                f"📤 Enviar estimaciones para {proyecto['nombre']} ({proyecto['subtipo']})", 
                 use_container_width=True
             )
             
@@ -322,19 +326,25 @@ with tabs[-1]:
     st.write("## 📊 Análisis Completo de Percentiles")
     
     # Selector de proyecto para análisis
-    proyecto_seleccionado = st.selectbox(
+    opciones_analisis = [f"{p['nombre']} ({p['subtipo']})" for p in proyectos_activos]
+    proyecto_seleccionado_idx = st.selectbox(
         "Selecciona un proyecto para análisis detallado",
-        [p['nombre'] for p in proyectos_activos],
+        range(len(opciones_analisis)),
+        format_func=lambda i: opciones_analisis[i],
         key="proyecto_analisis"
     )
     
-    proyecto_id = proyectos_activos[[p['nombre'] for p in proyectos_activos].index(proyecto_seleccionado)]['id']
-    p50_valor = proyectos_activos[[p['nombre'] for p in proyectos_activos].index(proyecto_seleccionado)]['p50']
+    proyecto_seleccionado = proyectos_activos[proyecto_seleccionado_idx]
+    proyecto_id = proyecto_seleccionado['id']
+    p50_valor = proyecto_seleccionado['p50']
+    unidad = proyecto_seleccionado['unidad']
+    tipo = proyecto_seleccionado['tipo']
+    titulo_tipo = "Costos" if tipo == 'costos' else "Plazos"
     
     df_proyecto = load_responses(proyecto_id)
     
     if len(df_proyecto) == 0:
-        st.info(f"📭 Aún no hay respuestas para {proyecto_seleccionado}. ¡Sé el primero en responder!")
+        st.info(f"📭 Aún no hay respuestas para {proyecto_seleccionado['nombre']}. ¡Sé el primero en responder!")
     else:
         st.divider()
         
@@ -348,7 +358,7 @@ with tabs[-1]:
         with col2:
             st.metric("Correos únicos", df_proyecto['Email'].nunique())
         with col3:
-            st.metric("P50 objetivo", f"{p50_valor} KUSD")
+            st.metric(f"P50 objetivo", f"{p50_valor} {unidad}")
         with col4:
             st.metric("Última actualización", df_proyecto['Timestamp'].iloc[-1])
         
@@ -387,7 +397,7 @@ with tabs[-1]:
             fig1.update_layout(
                 height=400,
                 barmode='overlay',
-                xaxis_title='Estimación (KUSD)',
+                xaxis_title=f'Estimación ({unidad})',
                 yaxis_title='Cantidad de Participantes'
             )
             
@@ -421,7 +431,7 @@ with tabs[-1]:
             fig2.update_layout(
                 height=400,
                 barmode='overlay',
-                xaxis_title='Estimación (KUSD)',
+                xaxis_title=f'Estimación ({unidad})',
                 yaxis_title='Cantidad de Participantes'
             )
             
@@ -430,7 +440,7 @@ with tabs[-1]:
         st.divider()
         
         # ========== GRÁFICO COMPARATIVO ==========
-        st.write("### 📉 Comparativa de Percentiles vs P50")
+        st.write(f"### 📉 Comparativa de Percentiles vs P50 ({titulo_tipo})")
         
         # Calcular promedios
         promedios = {
@@ -453,12 +463,12 @@ with tabs[-1]:
         ))
         
         fig3.add_hline(y=p50_valor, line_dash="dash", line_color="red",
-                      annotation_text=f"P50 Objetivo: {p50_valor} KUSD")
+                      annotation_text=f"P50 Objetivo: {p50_valor} {unidad}")
         
         fig3.update_layout(
             height=400,
             xaxis_title='Percentil',
-            yaxis_title='Estimación (KUSD)',
+            yaxis_title=f'Estimación ({unidad})',
             showlegend=False
         )
         
@@ -520,7 +530,7 @@ with tabs[-1]:
         # Descargar datos
         csv = df_proyecto.to_csv(index=False)
         st.download_button(
-            label=f"📥 Descargar datos ({proyecto_seleccionado})",
+            label=f"📥 Descargar datos ({proyecto_seleccionado['nombre']})",
             data=csv,
             file_name=f"estimaciones_{proyecto_id}.csv",
             mime="text/csv"
@@ -543,7 +553,7 @@ if st.session_state.show_admin and st.session_state.admin_authenticated:
         for idx, proyecto in enumerate(config['proyectos']):
             with cols[idx]:
                 nuevo_estado = st.checkbox(
-                    f"{proyecto['nombre']}",
+                    f"{proyecto['nombre']}\n({proyecto['subtipo']})",
                     value=proyecto['activo'],
                     key=f"toggle_{proyecto['id']}"
                 )
@@ -565,7 +575,7 @@ if st.session_state.show_admin and st.session_state.admin_authenticated:
                 nuevo_p50 = st.number_input(
                     f"P50 {proyecto['nombre']}",
                     value=proyecto['p50'],
-                    step=5,
+                    step=1 if proyecto['tipo'] == 'plazos' else 5,
                     key=f"p50_{proyecto['id']}"
                 )
                 
