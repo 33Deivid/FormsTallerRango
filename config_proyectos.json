@@ -2,49 +2,61 @@
   "proyectos": [
     {
       "id": "proyecto_1",
-      "nombre": "Proyecto A Costos",
-      "descripcion": "Estimación de costos - Proyecto A",
+      "nombre": "Proyecto A",
+      "subtipo": "Costos",
+      "tipo": "costos",
+      "unidad": "KUSD",
       "p50": 150,
       "activo": true,
       "orden": 1
     },
     {
       "id": "proyecto_2",
-      "nombre": "Proyecto A Plazos",
-      "descripcion": "Estimación de Plazos - Proyecto A",
+      "nombre": "Proyecto A",
+      "subtipo": "Plazos",
+      "tipo": "plazos",
+      "unidad": "meses",
       "p50": 5,
       "activo": false,
       "orden": 2
     },
     {
       "id": "proyecto_3",
-      "nombre": "Proyecto B Costos",
-      "descripcion": "Estimación de costos - Proyecto B",
-      "p50": 150,
+      "nombre": "Proyecto B",
+      "subtipo": "Costos",
+      "tipo": "costos",
+      "unidad": "KUSD",
+      "p50": 200,
       "activo": false,
       "orden": 3
     },
     {
       "id": "proyecto_4",
-      "nombre": "Proyecto B Plazos",
-      "descripcion": "Estimación de Plazos - Proyecto B",
-      "p50": 150,
+      "nombre": "Proyecto B",
+      "subtipo": "Plazos",
+      "tipo": "plazos",
+      "unidad": "meses",
+      "p50": 8,
       "activo": false,
       "orden": 4
     },
     {
       "id": "proyecto_5",
-      "nombre": "Proyecto C Costos",
-      "descripcion": "Estimación de costos - Proyecto C",
-      "p50": 150,
+      "nombre": "Proyecto C",
+      "subtipo": "Costos",
+      "tipo": "costos",
+      "unidad": "KUSD",
+      "p50": 300,
       "activo": false,
       "orden": 5
     },
     {
       "id": "proyecto_6",
-      "nombre": "Proyecto C Plazos",
-      "descripcion": "Estimación de costos - Proyecto C",
-      "p50": 150,
+      "nombre": "Proyecto C",
+      "subtipo": "Plazos",
+      "tipo": "plazos",
+      "unidad": "meses",
+      "p50": 12,
       "activo": false,
       "orden": 6
     }
