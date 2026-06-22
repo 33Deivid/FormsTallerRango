@@ -8,7 +8,7 @@ from pathlib import Path
 
 # Configuración de la página
 st.set_page_config(
-    page_title="Formulario de Encuesta",
+    page_title="Formulario Taller de Rango API N20MS10",
     page_icon="📋",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -43,17 +43,16 @@ def load_responses():
         return pd.read_csv(DATA_FILE)
     return pd.DataFrame()
 
-def save_response(nombre, email, edad, ciudad, pregunta1, pregunta2, pregunta3):
+def save_response(nombre, email, pregunta1, pregunta2, pregunta3, pregunta4):
     """Guarda una respuesta en el CSV"""
     new_data = {
         'Timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         'Nombre': nombre,
         'Email': email,
-        'Edad': edad,
-        'Ciudad': ciudad,
-        '¿Cómo califica nuestro servicio?': pregunta1,
-        '¿Volvería a utilizar nuestros servicios?': pregunta2,
-        '¿Nos recomendaría?': pregunta3
+        'P1': pregunta1,
+        'p10': pregunta2,
+        'P90': pregunta3,
+        'p99': pregunta4
     }
     
     df = load_responses()
@@ -64,7 +63,7 @@ def save_response(nombre, email, edad, ciudad, pregunta1, pregunta2, pregunta3):
 col1, col2 = st.columns([3, 1])
 
 with col1:
-    st.markdown("<h1 class='main-title'>📋 Formulario de Encuesta en Vivo</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-title'>📋 Formulario  Taller de Rango API N20MS10</h1>", unsafe_allow_html=True)
 
 with col2:
     if st.button("🔄 Actualizar datos", key="refresh_btn"):
@@ -81,14 +80,8 @@ with tab1:
         
         with col1:
             nombre = st.text_input(
-                "Nombre completo",
+                "Nombre",
                 placeholder="Juan Pérez"
-            )
-            edad = st.number_input(
-                "Edad",
-                min_value=13,
-                max_value=120,
-                value=25
             )
         
         with col2:
@@ -96,35 +89,38 @@ with tab1:
                 "Correo electrónico",
                 placeholder="correo@ejemplo.com"
             )
-            ciudad = st.text_input(
-                "Ciudad",
-                placeholder="Bogotá"
-            )
         
         st.divider()
-        st.write("### Preguntas")
+        st.write("### ¿Cual crees que es el percentil 1, 10, 90 y 99 del costo estimado de Talleres de Mantenimiento?")
         
-        col1, col2, col3 = st.columns(3)
+        col1, col2, col3, col4 = st.columns(4)
         
         with col1:
-            pregunta1 = st.radio(
-                "¿Cómo califica nuestro servicio?",
-                ["⭐ Excelente", "👍 Bueno", "😐 Regular", "👎 Malo"],
+            pregunta1 = st.slider(
+                "¿Cual crees que es el P1?",
+                1,5,3,
                 key="q1"
             )
         
         with col2:
-            pregunta2 = st.radio(
-                "¿Volvería a utilizar nuestros servicios?",
-                ["✅ Sí, definitivamente", "Probablemente", "No estoy seguro", "❌ No"],
+            pregunta2 =st.slider(
+                "¿Cual crees que es el P10?",
+                1,5,3,
                 key="q2"
             )
         
         with col3:
-            pregunta3 = st.radio(
-                "¿Nos recomendaría?",
-                ["🎯 Muy probablemente", "Probablemente", "Tal vez", "❌ No"],
+            pregunta3 = st.slider(
+                "¿Cual crees que es el P90?",
+                1,5,3,
                 key="q3"
+            )
+            
+        with col4:
+            pregunta4 = st.slider(
+                "¿Cual crees que es el P99?",
+                1,5,3,
+                key="q4"
             )
         
         comentarios = st.text_area(
@@ -136,12 +132,12 @@ with tab1:
         
         if submitted:
             # Validar campos obligatorios
-            if not nombre or not email or not ciudad:
+            if not nombre or not email:
                 st.error("⚠️ Por favor complete todos los campos obligatorios")
             elif "@" not in email:
                 st.error("⚠️ Por favor ingrese un correo válido")
             else:
-                save_response(nombre, email, edad, ciudad, pregunta1, pregunta2, pregunta3)
+                save_response(nombre, email, pregunta1, pregunta2, pregunta3, pregunta4 )
                 st.success("✅ ¡Gracias por completar el formulario!")
                 st.balloons()
                 st.session_state.form_submitted = True
@@ -153,16 +149,12 @@ with tab2:
         st.info("📭 Aún no hay respuestas. ¡Sé el primero en responder!")
     else:
         # Métricas principales
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2 = st.columns(2)
         
         with col1:
             st.metric("Total de respuestas", len(df))
         with col2:
             st.metric("Participantes únicos", df['Email'].nunique())
-        with col3:
-            st.metric("Edad promedio", f"{df['Edad'].mean():.1f}")
-        with col4:
-            st.metric("Ciudades representadas", df['Ciudad'].nunique())
         
         st.divider()
         
@@ -170,8 +162,8 @@ with tab2:
         col1, col2 = st.columns(2)
         
         with col1:
-            st.write("### Calificación del servicio")
-            q1_counts = df['¿Cómo califica nuestro servicio?'].value_counts()
+            st.write("### p1")
+            q1_counts = df['¿Cual el el P1?'].value_counts()
             fig1 = px.pie(
                 values=q1_counts.values,
                 names=q1_counts.index,
