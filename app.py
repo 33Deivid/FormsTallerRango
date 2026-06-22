@@ -176,7 +176,7 @@ with tab2:
                 values=q1_counts.values,
                 names=q1_counts.index,
                 hole=0.3,
-                color_discrete_sequence=px.colors.sequential.RdYlGn_r
+                color_discrete_sequence=["#FF6B6B", "#4ECDC4", "#FFE66D", "#95A5A6"]
             )
             fig1.update_layout(height=400)
             st.plotly_chart(fig1, use_container_width=True)
@@ -188,7 +188,7 @@ with tab2:
                 x=q2_counts.index,
                 y=q2_counts.values,
                 color=q2_counts.index,
-                color_discrete_sequence=px.colors.sequential.Blues_r
+                color_discrete_sequence=["#3498DB", "#2ECC71", "#F39C12", "#E74C3C"]
             )
             fig2.update_layout(height=400, showlegend=False)
             fig2.update_xaxes(title_text="")
@@ -204,7 +204,7 @@ with tab2:
                 x=q3_counts.index,
                 y=q3_counts.values,
                 color=q3_counts.index,
-                color_discrete_sequence=px.colors.sequential.Greens_r
+                color_discrete_sequence=["#27AE60", "#2ECC71", "#F39C12", "#E74C3C"]
             )
             fig3.update_layout(height=400, showlegend=False)
             fig3.update_xaxes(title_text="")
@@ -217,7 +217,7 @@ with tab2:
                 df,
                 x='Edad',
                 nbins=10,
-                color_discrete_sequence=["#636EFA"]
+                color_discrete_sequence=["#9B59B6"]
             )
             fig4.update_layout(height=400, showlegend=False)
             fig4.update_xaxes(title_text="Edad")
@@ -231,7 +231,7 @@ with tab2:
             x=ciudades_counts.index,
             y=ciudades_counts.values,
             labels={'x': 'Ciudad', 'y': 'Respuestas'},
-            color_discrete_sequence=["#AB63FA"]
+            color_discrete_sequence=["#E67E22"]
         )
         fig5.update_layout(height=400)
         fig5.update_xaxes(title_text="Ciudad")
