@@ -1,44 +1,65 @@
 {
   "proyectos": [
     {
-      "id": "proyecto_1",
-      "nombre": "Proyecto A",
+      "id": "Paquete_1",
+      "nombre": "P1: Pique de extracción N°2",
       "subtipo": "Costos",
       "tipo": "costos",
-      "unidad": "KUSD",
-      "p50": 150,
+      "unidad": "MUSD",
+      "p50": 24.3,
       "activo": true,
-      "orden": 1
+      "orden": 1,
+      "limite_inferior": 10,
+      "limite_superior": 40
     },
     {
-      "id": "proyecto_2",
-      "nombre": "Proyecto A",
-      "subtipo": "Plazos",
-      "tipo": "plazos",
-      "unidad": "meses",
-      "p50": 5,
-      "activo": false,
-      "orden": 2
-    },
-    {
-      "id": "proyecto_3",
-      "nombre": "Proyecto B",
+      "id": "Paquete_2",
+      "nombre": "P2: Ventilación de Extracción" ,
       "subtipo": "Costos",
       "tipo": "costos",
-      "unidad": "KUSD",
-      "p50": 200,
+      "unidad": "MUSD",
+      "p50": 21.1,
       "activo": false,
-      "orden": 3
+      "orden": 2,
+      "limite_inferior": 15,
+      "limite_superior": 30
     },
     {
-      "id": "proyecto_4",
-      "nombre": "Proyecto B",
+      "id": "Paquete_3",
+      "nombre": "P3: Talleres de Equipos Móviles",
+      "subtipo": "Costos",
+      "tipo": "costos",
+      "unidad": "MUSD",
+      "p50": 35.6,
+      "activo": false,
+      "orden": 3,
+      "limite_inferior": 20,
+      "limite_superior": 50
+    },
+    {
+      "id": "Paquete_4",
+      "nombre": "P4: Indirectos de Proyecto",
+      "subtipo": "Costos",
+      "tipo": "costos",
+      "unidad": "MUSD",
+      "p50": 45.2,
+      "activo": false,
+      "orden": 4,
+      "limite_inferior": 20,
+      "limite_superior": 80
+    },
+
+    {
+      "id": "Paquete_5",
+      "nombre": "P5: Capacitación de Personal",
       "subtipo": "Plazos",
       "tipo": "plazos",
       "unidad": "meses",
       "p50": 8,
       "activo": false,
-      "orden": 4
+      "orden": 4,
+      "limite_inferior": 0,
+      "limite_superior": 750
     },
     {
       "id": "proyecto_5",
@@ -48,7 +69,9 @@
       "unidad": "KUSD",
       "p50": 300,
       "activo": false,
-      "orden": 5
+      "orden": 5,
+      "limite_inferior": 0,
+      "limite_superior": 750
     },
     {
       "id": "proyecto_6",
@@ -58,7 +81,9 @@
       "unidad": "meses",
       "p50": 12,
       "activo": false,
-      "orden": 6
+      "orden": 6,
+      "limite_inferior": 0,
+      "limite_superior": 750
     }
   ]
 }

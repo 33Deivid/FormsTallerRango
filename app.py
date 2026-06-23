@@ -112,6 +112,18 @@ def calcular_percentiles_datos(valores):
         'mediana': np.median(valores)
     }
 
+
+def _clamp_one_decimal(v, lo, hi):
+    """Clamp a number to [lo, hi] and round to one decimal place."""
+    try:
+        vf = float(v)
+    except Exception:
+        vf = float(lo)
+    lo_f = float(lo)
+    hi_f = float(hi)
+    vf = max(lo_f, min(hi_f, vf))
+    return round(vf, 1)
+
 # Inicializar sesión
 if 'form_submitted' not in st.session_state:
     st.session_state.form_submitted = False
@@ -187,6 +199,17 @@ for idx, proyecto in enumerate(proyectos_activos):
         # Título dinámico según tipo
         titulo_tipo = "Estimación de Costos" if proyecto['tipo'] == 'costos' else "Estimación de Plazos"
         unidad = proyecto['unidad']
+        # Límites por proyecto (esperados en config JSON como 'limite_inferior' y 'limite_superior')
+        min_limit = proyecto.get('limite_inferior', 0.0)
+        max_limit = proyecto.get('limite_superior', float(proyecto['p50'] * 5))
+        try:
+            min_limit = float(min_limit)
+        except Exception:
+            min_limit = 0.0
+        try:
+            max_limit = float(max_limit)
+        except Exception:
+            max_limit = float(proyecto['p50'] * 5)
         
         st.write(f"### {proyecto['nombre']} - {proyecto['subtipo']}")
         st.write(f"_{titulo_tipo} - {proyecto['nombre']}_")
@@ -222,22 +245,24 @@ for idx, proyecto in enumerate(proyectos_activos):
                 
                 p1 = st.number_input(
                     f"P1 (Percentil 1) - Mejor caso",
-                    min_value=0,
-                    max_value=proyecto['p50'],
-                    value=int(proyecto['p50'] * 0.3),
-                    step=1 if proyecto['tipo'] == 'plazos' else 5,
+                    min_value=min_limit,
+                    max_value=float(proyecto['p50']),
+                    value=_clamp_one_decimal(proyecto['p50'] * 0.3, min_limit, proyecto['p50']),
+                    step=0.1,
+                    format="%.1f",
                     key=f"p1_{proyecto['id']}",
-                    help=f"Máximo: {proyecto['p50']} {unidad}"
+                    help=f"Rango: {min_limit} - {proyecto['p50']} {unidad}"
                 )
                 
                 p10 = st.number_input(
                     f"P10 (Percentil 10)",
-                    min_value=0,
-                    max_value=proyecto['p50'],
-                    value=int(proyecto['p50'] * 0.6),
-                    step=1 if proyecto['tipo'] == 'plazos' else 5,
+                    min_value=min_limit,
+                    max_value=float(proyecto['p50']),
+                    value=_clamp_one_decimal(proyecto['p50'] * 0.6, min_limit, proyecto['p50']),
+                    step=0.1,
+                    format="%.1f",
                     key=f"p10_{proyecto['id']}",
-                    help=f"Máximo: {proyecto['p50']} {unidad}"
+                    help=f"Rango: {min_limit} - {proyecto['p50']} {unidad}"
                 )
             
             with col2:
@@ -245,22 +270,24 @@ for idx, proyecto in enumerate(proyectos_activos):
                 
                 p90 = st.number_input(
                     f"P90 (Percentil 90)",
-                    min_value=proyecto['p50'],
-                    max_value=int(proyecto['p50'] * 3),
-                    value=int(proyecto['p50'] * 1.5),
-                    step=1 if proyecto['tipo'] == 'plazos' else 5,
+                    min_value=float(proyecto['p50']),
+                    max_value=max_limit,
+                    value=_clamp_one_decimal(proyecto['p50'] * 1.5, proyecto['p50'], max_limit),
+                    step=0.1,
+                    format="%.1f",
                     key=f"p90_{proyecto['id']}",
-                    help=f"Mínimo: {proyecto['p50']} {unidad}"
+                    help=f"Rango: {proyecto['p50']} - {max_limit} {unidad}"
                 )
                 
                 p99 = st.number_input(
                     f"P99 (Percentil 99) - Peor caso",
-                    min_value=proyecto['p50'],
-                    max_value=int(proyecto['p50'] * 5),
-                    value=int(proyecto['p50'] * 2.5),
-                    step=1 if proyecto['tipo'] == 'plazos' else 5,
+                    min_value=float(proyecto['p50']),
+                    max_value=max_limit,
+                    value=_clamp_one_decimal(proyecto['p50'] * 2.5, proyecto['p50'], max_limit),
+                    step=0.1,
+                    format="%.1f",
                     key=f"p99_{proyecto['id']}",
-                    help=f"Mínimo: {proyecto['p50']} {unidad}"
+                    help=f"Rango: {proyecto['p50']} - {max_limit} {unidad}"
                 )
             
             # Validaciones visuales
@@ -574,15 +601,16 @@ if st.session_state.show_admin and st.session_state.admin_authenticated:
             with cols[idx]:
                 nuevo_p50 = st.number_input(
                     f"P50 {proyecto['nombre']}",
-                    value=proyecto['p50'],
-                    step=1 if proyecto['tipo'] == 'plazos' else 5,
+                    value=float(proyecto['p50']),
+                    step=0.1,
+                    format="%.1f",
                     key=f"p50_{proyecto['id']}"
                 )
                 
                 if nuevo_p50 != proyecto['p50']:
                     config['proyectos'][idx]['p50'] = nuevo_p50
                     save_config(config)
-                    st.success(f"✅ P50 actualizado")
+                    st.success(f"✅ Proyecto actualizado")
                     st.rerun()
     
     # Botón para cerrar sesión
@@ -596,7 +624,7 @@ if st.session_state.show_admin and st.session_state.admin_authenticated:
 st.divider()
 st.markdown("""
     <div style='text-align: center; color: gray; font-size: 0.9em; margin-top: 30px;'>
-        Estimador de Percentiles creado con ❤️ usando Streamlit | 
+        Estimador de Percentiles creado Streamlit  | 
         Comparte el link para recopilar estimaciones en tiempo real
     </div>
 """, unsafe_allow_html=True)
