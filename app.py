@@ -97,10 +97,14 @@ def save_response(proyecto_id, p1, p50, p99, comentarios=""):
         'P99': p99,
         'Comentarios': comentarios
     }
-
-    df = load_responses()
-    df = pd.concat([df, pd.DataFrame([new_data])], ignore_index=True)
-    df.to_csv(DATA_FILE, index=False)
+    try:
+        df = load_responses(proyecto_id=None, drop_personal=False)
+        # append keeping columns consistent
+        df = pd.concat([df, pd.DataFrame([new_data])], ignore_index=True)
+        df.to_csv(DATA_FILE, index=False)
+        return True
+    except Exception:
+        return False
 
 def calcular_percentiles_datos(valores):
     """Calcula percentiles de los datos recopilados"""
@@ -146,6 +150,20 @@ with col2:
     # Botón para panel de control
     if st.button("⚙️ Panel Control", key="admin_btn"):
         st.session_state.show_admin = not st.session_state.show_admin
+    # Botón de descarga rápido para administradores (base completa)
+    if st.session_state.admin_authenticated:
+        try:
+            full_df_header = load_responses(proyecto_id=None, drop_personal=False)
+            csv_header = full_df_header.to_csv(index=False)
+            st.download_button(
+                label="📥 Descargar base completa (admin)",
+                data=csv_header,
+                file_name="estimaciones_completa.csv",
+                mime="text/csv",
+                key="download_header_admin"
+            )
+        except Exception:
+            st.warning("⚠️ Error al preparar la descarga completa")
 
 # ========== MODAL DE AUTENTICACIÓN ==========
 if st.session_state.show_admin and not st.session_state.admin_authenticated:
@@ -315,15 +333,27 @@ for idx, proyecto in enumerate(proyectos_activos):
             )
 
             if submitted:
-                # Validar restricciones de percentiles
-                if not (p1 <= p50_user and p50_user <= p99):
-                    st.error("⚠️ Verifica: debe cumplirse P1 ≤ P50 ≤ P99")
-                elif p1 > p99:
-                    st.error("⚠️ P1 debe ser menor o igual a P99")
+                # Validar y convertir a float de forma segura
+                try:
+                    p1f = float(p1)
+                    p50f = float(p50_user)
+                    p99f = float(p99)
+                except Exception:
+                    st.error("⚠️ Valores inválidos: asegúrate de ingresar números válidos con máximo 1 decimal")
                 else:
-                    save_response(proyecto['id'], p1, p50_user, p99, comentarios)
-                    st.success(f"✅ ¡Gracias por tus estimaciones para {proyecto['nombre']}!")
-                    st.balloons()
+                    # Comprobaciones lógicas
+                    if not (p1f <= p50f and p50f <= p99f):
+                        st.error("⚠️ Verifica: debe cumplirse P1 ≤ P50 ≤ P99")
+                    elif p1f > p99f:
+                        st.error("⚠️ P1 debe ser menor o igual a P99")
+                    else:
+                        saved = save_response(proyecto['id'], round(p1f,1), round(p50f,1), round(p99f,1), comentarios)
+                        if saved:
+                            st.success(f"✅ ¡Gracias por tus estimaciones para {proyecto['nombre']}!")
+                            # Mostrar globos solo si el guardado fue exitoso
+                            st.balloons()
+                        else:
+                            st.error("❌ Ocurrió un error al guardar. Intenta nuevamente más tarde.")
 
 # Tab de análisis completo
 with tabs[-1]:
@@ -550,22 +580,6 @@ if st.session_state.show_admin and st.session_state.admin_authenticated:
         st.write("### Modificar P50")
         
         cols = st.columns(len(config['proyectos']))
-        
-        for idx, proyecto in enumerate(config['proyectos']):
-            with cols[idx]:
-                nuevo_p50 = st.number_input(
-                    f"P50 {proyecto['nombre']}",
-                    value=float(proyecto['p50']),
-                    step=0.1,
-                    format="%.1f",
-                    key=f"p50_{proyecto['id']}"
-                )
-                
-                if nuevo_p50 != proyecto['p50']:
-                    config['proyectos'][idx]['p50'] = nuevo_p50
-                    save_config(config)
-                    st.success(f"✅ Proyecto actualizado")
-                    st.rerun()
     
     # Botón para cerrar sesión
     if st.button("🚪 Cerrar sesión de admin", use_container_width=True):
