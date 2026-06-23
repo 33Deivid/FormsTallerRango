@@ -48,42 +48,41 @@
       "limite_inferior": 20,
       "limite_superior": 80
     },
-
     {
-      "id": "Paquete_5",
-      "nombre": "P5: Capacitación de Personal",
+      "id": "proyecto_5",
+      "nombre": "P1: Pique de extracción N°2",
       "subtipo": "Plazos",
       "tipo": "plazos",
       "unidad": "meses",
-      "p50": 8,
-      "activo": false,
-      "orden": 4,
-      "limite_inferior": 0,
-      "limite_superior": 750
-    },
-    {
-      "id": "proyecto_5",
-      "nombre": "Proyecto C",
-      "subtipo": "Costos",
-      "tipo": "costos",
-      "unidad": "KUSD",
-      "p50": 300,
+      "p50": 27,
       "activo": false,
       "orden": 5,
-      "limite_inferior": 0,
-      "limite_superior": 750
+      "limite_inferior": 26,
+      "limite_superior": 32
     },
     {
       "id": "proyecto_6",
-      "nombre": "Proyecto C",
+      "nombre": "P2: Ventilación de Extracción" ,
       "subtipo": "Plazos",
       "tipo": "plazos",
       "unidad": "meses",
       "p50": 12,
       "activo": false,
       "orden": 6,
-      "limite_inferior": 0,
-      "limite_superior": 750
+      "limite_inferior": 8,
+      "limite_superior": 16
+    },
+    {
+      "id": "proyecto_7",
+      "nombre": "P3: Talleres de Equipos Móviles",
+      "subtipo": "Plazos",
+      "tipo": "plazos",
+      "unidad": "meses",
+      "p50": 6,
+      "activo": false,
+      "orden": 7,
+      "limite_inferior": 3,
+      "limite_superior": 9
     }
   ]
 }
