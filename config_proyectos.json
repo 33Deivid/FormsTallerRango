@@ -54,11 +54,11 @@
       "subtipo": "Plazos",
       "tipo": "plazos",
       "unidad": "meses",
-      "p50": 8,
+      "p50": 7,
       "activo": false,
       "orden": 5,
-      "limite_inferior": 7,
-      "limite_superior": 13
+      "limite_inferior": 6,
+      "limite_superior": 12
     },
     {
       "id": "proyecto_6",
