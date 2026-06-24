@@ -262,7 +262,7 @@ for idx, proyecto in enumerate(proyectos_activos):
 
             
             st.divider()
-            st.write(f"### Estimaciones de {titulo_tipo} ({unidad})")
+            st.write(f"###{titulo_tipo} ({unidad})")
 
             #Identificador de usuario (puede dejar su nombre o pseudonimo, obligatorio)
             st.write("Proporciona un nombre o Pseudonimo")
