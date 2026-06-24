@@ -88,17 +88,20 @@ def load_responses(proyecto_id=None, drop_personal=True):
     return pd.DataFrame()
 
 
-def save_response(proyecto_id, p1, p99, p50_percentil, comentarios=""):
+def save_response(proyecto_id, name, p1,p10,p90, p99, p50_percentil, comentarios=""):
     """Guarda una respuesta en el CSV (sin datos personales).
 
-    Guardamos: `Timestamp`, `Proyecto`, `P1`, `P99`, `P50_percentil` (el percentil
+    Guardamos: `Timestamp`, `Proyecto`, `P1`, p10, p90,`P99`, `P50_percentil` (el percentil
     que el usuario asigna al Valor Esperado) y `Comentarios`. `P50_percentil` es
     obligatorio y no se sobrescribe el `proyecto['p50']`.
     """
     new_data = {
         'Timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         'Proyecto': proyecto_id,
+        'Nombre o Pseudónimo': name,  
         'P1': p1,
+        'P10': p10,
+        'P90': p90,
         'P99': p99,
         'P50_percentil': p50_percentil,
         'Comentarios': comentarios
@@ -120,7 +123,9 @@ def calcular_percentiles_datos(valores):
     
     return {
         'p1': np.percentile(valores, 1),
+        'p10': np.percentile(valores, 10),
         'p50': np.percentile(valores, 50),
+        'p90': np.percentile(valores, 90),
         'p99': np.percentile(valores, 99),
         'media': np.mean(valores),
         'mediana': np.median(valores)
@@ -145,13 +150,15 @@ if 'show_admin' not in st.session_state:
     st.session_state.show_admin = False
 if 'admin_authenticated' not in st.session_state:
     st.session_state.admin_authenticated = False
+if 'confirm_delete' not in st.session_state:
+    st.session_state.confirm_delete = False
 
 # ========== LAYOUT PRINCIPAL ==========
 
 col1, col2 = st.columns([3, 1])
 
 with col1:
-    st.markdown("<h1 class='main-title'>📊 Estimador de Percentiles</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-title'>📊 Taller de Rango API N20MS10 - Estimador de Percentiles</h1>", unsafe_allow_html=True)
 
 with col2:
     # Botón para panel de control
@@ -252,9 +259,17 @@ for idx, proyecto in enumerate(proyectos_activos):
             
             with col2:
                 pass  # Espacio para balance
+
             
             st.divider()
             st.write(f"### Estimaciones de {titulo_tipo} ({unidad})")
+
+            #Identificador de usuario (puede dejar su nombre o pseudonimo, obligatorio)
+            st.write("Proporciona un nombre o Pseudonimo")
+            name = st.text_input("Nombre o Pseudonimo", placeholder="Ingresa tu nombre o pseudonimo")
+
+            st.divider()
+
             st.write("Proporciona tu estimación para cada percentil:")
             
             # Crear dos columnas para los inputs
@@ -274,12 +289,30 @@ for idx, proyecto in enumerate(proyectos_activos):
                     help=f"Rango: {min_limit} - {proyecto['p50']} {unidad}"
                 )
                 
-                # P10 ya no se solicita
-            
+                p10 = st.number_input(
+                    f"P10 (Percentil 10) - Mejor caso",
+                    min_value=min_limit,
+                    max_value=float(proyecto['p50']),
+                    value=_clamp_one_decimal(proyecto['p50'] * 0.3, min_limit, proyecto['p50']),
+                    step=0.1,
+                    format="%.1f",
+                    key=f"p10_{proyecto['id']}",
+                    help=f"Rango: {min_limit} - {proyecto['p50']} {unidad}"
+                )                
             with col2:
                 st.markdown("#### Percentiles Altos (Peor Caso)")
                 
-                # P90 ya no se solicita
+                p90 = st.number_input(
+                                    f"P90 (Percentil 90) - Peor caso",
+                                    min_value=float(proyecto['p50']),
+                                    max_value=max_limit,
+                                    value=_clamp_one_decimal(proyecto['p50'] * 2.5, proyecto['p50'], max_limit),
+                                    step=0.1,
+                                    format="%.1f",
+                                    key=f"p90_{proyecto['id']}",
+                                    help=f"Rango: {proyecto['p50']} - {max_limit} {unidad}"
+                )
+
                 p99 = st.number_input(
                     f"P99 (Percentil 99) - Peor caso",
                     min_value=float(proyecto['p50']),
@@ -293,9 +326,7 @@ for idx, proyecto in enumerate(proyectos_activos):
 
             st.divider()
 
-            # Nuevo: preguntar qué percentil (35-65) el usuario asigna al Valor Esperado
-            # Nota: esto NO cambia el Valor Esperado del proyecto (`proyecto['p50']`),
-            # solo registra la opinión del usuario sobre a qué percentil corresponde ese valor.
+            #Captura de percentil del valor esperado mostrado (P50) según criterio del usuario
             p50_percentil = st.number_input(
                 "¿Qué percentil consideras que corresponde al Valor Esperado mostrado?",
                 min_value=35.0,
@@ -304,31 +335,8 @@ for idx, proyecto in enumerate(proyectos_activos):
                 step=0.1,
                 format="%.1f",
                 key=f"p50_percentil_{proyecto['id']}",
-                help="Selecciona el percentil (35–65) que, según tu criterio, representa el Valor Esperado mostrado. Esto no modifica el P50 del proyecto."
+                help="Selecciona el percentil que, según tu criterio, representa el Valor Esperado mostrado."
             )
-            
-            # # Validaciones visuales
-            # col1, col2, col3, col4 = st.columns(2)
-            
-            # with col1:
-            #     if p1 <= proyecto['p50']:
-            #         st.success("✅ P1 válido")
-            #     else:
-            #         st.error("❌ P1 debe ser ≤ P50")
-            
-            # with col2:
-            #     # No se valida P10
-            #     pass
-            
-            # with col3:
-            #     # No se valida P90
-            #     pass
-            
-            # with col4:
-            #     if p99 >= proyecto['p50']:
-            #         st.success("✅ P99 válido")
-            #     else:
-            #         st.error("❌ P99 debe ser ≥ P50")
             
             st.divider()
             
@@ -344,36 +352,59 @@ for idx, proyecto in enumerate(proyectos_activos):
             )
 
             if submitted:
-                # Validar y convertir a float de forma segura
-                try:
-                    p1f = float(p1)
-                    p99f = float(p99)
-                    p50_percentil_f = float(p50_percentil)
-                except Exception:
-                    st.error("⚠️ Valores inválidos: asegúrate de ingresar números válidos con máximo 1 decimal")
+                # Nombre/pseudónimo obligatorio
+                if not name or str(name).strip() == "":
+                    st.error("⚠️ Por favor completa Nombre o Pseudónimo (obligatorio)")
                 else:
-                    # El Valor Esperado (P50) se toma del proyecto y no se modifica aquí
-                    p50_project_val = float(proyecto['p50'])
-
-                    # Comprobaciones lógicas respecto al Valor Esperado del proyecto
-                    if not (p1f <= p50_project_val and p50_project_val <= p99f):
-                        st.error("⚠️ Verifica: debe cumplirse P1 ≤ P50 (valor esperado) ≤ P99")
-                    elif p1f > p99f:
-                        st.error("⚠️ P1 debe ser menor o igual a P99")
+                    # Validar y convertir a float de forma segura
+                    try:
+                        p1f = float(p1)
+                        p10f = float(p10)
+                        p90f = float(p90)
+                        p99f = float(p99)
+                        p50_percentil_f = float(p50_percentil)
+                    except Exception:
+                        st.error("⚠️ Valores inválidos: asegúrate de ingresar números válidos con máximo 1 decimal")
                     else:
-                        # Guardar solo P1, P99 y el percentil que el usuario asignó al Valor Esperado
-                        saved = save_response(
-                            proyecto['id'],
-                            round(p1f, 1),
-                            round(p99f, 1),
-                            round(p50_percentil_f, 1),
-                            comentarios
-                        )
-                        if saved:
-                            st.success(f"✅ ¡Gracias por tus estimaciones para {proyecto['nombre']}!")
-                            st.balloons()
+                        # El Valor Esperado (P50) se toma del proyecto y no se modifica aquí
+                        p50_project_val = float(proyecto['p50'])
+
+                        # Límites del proyecto
+                        lower_limit = float(min_limit)
+                        upper_limit = float(max_limit)
+
+                        # Validaciones solicitadas:
+                        # P1 no mayor que P10 ni que P50
+                        if p1f > p10f or p1f > p50_project_val:
+                            st.error("⚠️ P1 no puede ser mayor que P10 ni que P50")
+                        # P10 no menor que P1 ni que límite inferior y no mayor que P50
+                        elif p10f < p1f or p10f < lower_limit or p10f > p50_project_val:
+                            st.error(f"⚠️ P10 debe ser ≥ P1, ≥ {lower_limit} y ≤ P50 ({p50_project_val})")
+                        # P90 y P99 no menores que P50 y no mayores que límite superior
+                        elif p90f < p50_project_val or p90f < p50_project_val or p90f > upper_limit:
+                            st.error(f"⚠️ P90 debe ser ≥ P50 ({p50_project_val}) y ≤ límite superior ({upper_limit})")
+                        elif p99f < p50_project_val or p99f > upper_limit:
+                            st.error(f"⚠️ P99 debe ser ≥ P50 ({p50_project_val}) y ≤ límite superior ({upper_limit})")
+                        # P90 no mayor que P99
+                        elif p90f > p99f:
+                            st.error("⚠️ P90 no puede ser mayor que P99")
                         else:
-                            st.error("❌ Ocurrió un error al guardar. Intenta nuevamente más tarde.")
+                            # Guardar P1, P10, P90, P99 y el percentil que el usuario asignó al Valor Esperado
+                            saved = save_response(
+                                proyecto['id'],
+                                str(name).strip(),
+                                round(p1f, 1),
+                                round(p10f, 1),
+                                round(p90f, 1),
+                                round(p99f, 1),
+                                round(p50_percentil_f, 1),
+                                comentarios
+                            )
+                            if saved:
+                                st.success(f"✅ ¡Gracias por tus estimaciones para {proyecto['nombre']}!")
+                                st.balloons()
+                            else:
+                                st.error("❌ Ocurrió un error al guardar. Intenta nuevamente más tarde.")
 
 # Tab de análisis completo
 with tabs[-1]:
@@ -433,12 +464,12 @@ with tabs[-1]:
         
         # ========== ANÁLISIS POR PERCENTIL ==========
         st.write("### 📊 Distribución de Estimaciones")
-        
+
         col1, col2 = st.columns(2)
-        
-        # Gráfico 1: Histograma de P1
+
+        # Gráfico 1: Histograma de P1 y P10
         with col1:
-            st.write("#### Percentiles Bajos (P1)")
+            st.write("#### Percentiles Bajos (P1 y P10)")
 
             fig1 = go.Figure()
             fig1.add_trace(go.Histogram(
@@ -448,6 +479,14 @@ with tabs[-1]:
                 marker_color='#3498DB',
                 nbinsx=15
             ))
+            if 'P10' in df_proyecto.columns:
+                fig1.add_trace(go.Histogram(
+                    x=df_proyecto['P10'],
+                    name='P10',
+                    opacity=0.7,
+                    marker_color='#2ECC71',
+                    nbinsx=15
+                ))
 
             fig1.add_vline(x=p50_valor, line_dash="dash", line_color="red",
                           annotation_text=f"P50: {p50_valor}", annotation_position="top right")
@@ -460,12 +499,21 @@ with tabs[-1]:
             )
 
             st.plotly_chart(fig1, use_container_width=True)
-        
-        # Gráfico 2: Histograma de P99
+
+        # Gráfico 2: Histograma de P90 y P99
         with col2:
-            st.write("#### Percentiles Altos (P99)")
+            st.write("#### Percentiles Altos (P90 y P99)")
 
             fig2 = go.Figure()
+            if 'P90' in df_proyecto.columns:
+                fig2.add_trace(go.Histogram(
+                    x=df_proyecto['P90'],
+                    name='P90',
+                    opacity=0.7,
+                    marker_color='#F39C12',
+                    nbinsx=15
+                ))
+
             fig2.add_trace(go.Histogram(
                 x=df_proyecto['P99'],
                 name='P99',
@@ -527,11 +575,13 @@ with tabs[-1]:
         # ========== GRÁFICO COMPARATIVO ==========
         st.write(f"### 📉 Comparativa de Percentiles vs P50 ({titulo_tipo})")
         
-        # Calcular promedios (P1, P50 fijo del proyecto, P99)
+        # Calcular promedios (P1, P10, P50 fijo del proyecto, P90, P99)
         promedios = {
             'P1': df_proyecto['P1'].mean(),
+            'P10': df_proyecto['P10'].mean() if 'P10' in df_proyecto.columns else float('nan'),
             # P50 es el Valor Esperado del proyecto (no es una media de respuestas)
             'P50': float(p50_valor),
+            'P90': df_proyecto['P90'].mean() if 'P90' in df_proyecto.columns else float('nan'),
             'P99': df_proyecto['P99'].mean()
         }
         
@@ -562,27 +612,37 @@ with tabs[-1]:
         
         # ========== ESTADÍSTICAS DETALLADAS ==========
         st.write("### 📋 Estadísticas por Percentil")
-        
+
         stats_data = {
-            'Percentil': ['P1', 'P99'],
+            'Percentil': ['P1', 'P10', 'P90', 'P99'],
             'Mín': [
                 df_proyecto['P1'].min(),
+                df_proyecto['P10'].min() if 'P10' in df_proyecto.columns else float('nan'),
+                df_proyecto['P90'].min() if 'P90' in df_proyecto.columns else float('nan'),
                 df_proyecto['P99'].min()
             ],
             'Promedio': [
                 df_proyecto['P1'].mean(),
+                df_proyecto['P10'].mean() if 'P10' in df_proyecto.columns else float('nan'),
+                df_proyecto['P90'].mean() if 'P90' in df_proyecto.columns else float('nan'),
                 df_proyecto['P99'].mean()
             ],
             'Mediana': [
                 df_proyecto['P1'].median(),         
+                df_proyecto['P10'].median() if 'P10' in df_proyecto.columns else float('nan'),
+                df_proyecto['P90'].median() if 'P90' in df_proyecto.columns else float('nan'),
                 df_proyecto['P99'].median()
             ],
             'Máx': [
                 df_proyecto['P1'].max(),
+                df_proyecto['P10'].max() if 'P10' in df_proyecto.columns else float('nan'),
+                df_proyecto['P90'].max() if 'P90' in df_proyecto.columns else float('nan'),
                 df_proyecto['P99'].max()
             ],
             'Desv. Est.': [
                 df_proyecto['P1'].std(),
+                df_proyecto['P10'].std() if 'P10' in df_proyecto.columns else float('nan'),
+                df_proyecto['P90'].std() if 'P90' in df_proyecto.columns else float('nan'),
                 df_proyecto['P99'].std()
             ]
         }
@@ -643,6 +703,26 @@ if st.session_state.show_admin and st.session_state.admin_authenticated:
                     st.rerun()
         
         st.divider()
+    st.divider()
+    with st.expander("🧹 Borrar datos de respuestas", expanded=False):
+        st.write("Eliminará todas las respuestas y reiniciará el dataset (irreversible).")
+        if st.button("🗑️ Iniciar borrado de datos", key="init_delete_root", use_container_width=True):
+            st.session_state.confirm_delete = True
+
+        if st.session_state.confirm_delete:
+            st.warning("⚠️ Estás a punto de borrar todos los datos. Esta acción no se puede deshacer.")
+            colc1, colc2 = st.columns(2)
+            with colc1:
+                if st.button("⚠️ CONFIRMAR BORRADO (IRREVERSIBLE)", key="confirm_delete_root", use_container_width=True):
+                    empty = pd.DataFrame(columns=['Timestamp','Proyecto','Nombre o Pseudónimo','P1','P10','P90','P99','P50_percentil','Comentarios'])
+                    empty.to_csv(DATA_FILE, index=False)
+                    st.success("✅ Datos borrados. Archivo reiniciado.")
+                    st.session_state.confirm_delete = False
+                    st.rerun()
+            with colc2:
+                if st.button("❌ Cancelar borrado", key="cancel_delete_root", use_container_width=True):
+                    st.session_state.confirm_delete = False
+                    st.info("Operación cancelada.")
     
     # Botón para cerrar sesión
     if st.button("🚪 Cerrar sesión de admin", use_container_width=True):
