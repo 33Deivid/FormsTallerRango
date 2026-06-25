@@ -72,8 +72,6 @@ def get_proyectos_activos(config):
 
 def load_responses(proyecto_id=None, drop_personal=True):
     """Carga las respuestas del CSV, opcionalmente filtradas por proyecto.
-
-    If drop_personal is True, 'Nombre' and 'Email' columns are removed.
     """
     if os.path.exists(DATA_FILE):
         df = pd.read_csv(DATA_FILE)
@@ -93,13 +91,13 @@ def save_response(proyecto_id, name, p1,p10,p90, p99, p50_percentil, comentarios
     new_data = {
         'Timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         'Proyecto': proyecto_id,
-        'Nombre': name,  
         'P1': p1,
         'P10': p10,
         'P90': p90,
         'P99': p99,
         'P50_percentil': p50_percentil,
-        'Comentarios': comentarios
+        'Comentarios': comentarios,
+        'Nombre': name  
     }
 
     try:
