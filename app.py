@@ -79,11 +79,6 @@ def load_responses(proyecto_id=None, drop_personal=True):
         df = pd.read_csv(DATA_FILE)
         if proyecto_id:
             df = df[df['Proyecto'] == proyecto_id]
-        if drop_personal:
-            # Eliminar columnas personales si existen
-            for col in ['Nombre', 'Email']:
-                if col in df.columns:
-                    df = df.drop(columns=[col])
         return df
     return pd.DataFrame()
 
