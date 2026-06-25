@@ -98,7 +98,7 @@ def save_response(proyecto_id, name, p1,p10,p90, p99, p50_percentil, comentarios
     new_data = {
         'Timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         'Proyecto': proyecto_id,
-        'Nombre o Pseudónimo': name,  
+        'Nombre': name,  
         'P1': p1,
         'P10': p10,
         'P90': p90,
@@ -437,14 +437,12 @@ with tabs[-1]:
         st.write("### 📈 Métricas de Estimaciones")
         
         # Mostrar métricas principales y el mapeo medio de percentil (si existe)
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3 = st.columns(3)
 
         with col1:
             st.metric("Total participantes", len(df_proyecto))
         with col2:
             st.metric(f"P50 objetivo", f"{p50_valor} {unidad}")
-        with col3:
-            st.metric("Última actualización", df_proyecto['Timestamp'].iloc[-1])
 
         # Promedio del percentil que los usuarios asignaron al Valor Esperado
         avg_percentil = None
@@ -454,7 +452,7 @@ with tabs[-1]:
             except Exception:
                 avg_percentil = None
 
-        with col4:
+        with col3:
             if avg_percentil is not None and not pd.isna(avg_percentil):
                 st.metric("P50 - mapeo medio (percentil)", f"{avg_percentil:.1f}")
             else:
