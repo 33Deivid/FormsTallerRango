@@ -47,13 +47,15 @@ st.markdown("""
 
 # ========== CONFIGURACIÓN Y FUNCIONES ==========
 
-CONFIG_FILE = "config_proyectos.json"
-DATA_FILE = "respuestas_percentiles.csv"
+# Obtener la ruta del directorio del script actual
+SCRIPT_DIR = Path(__file__).parent.absolute()
+CONFIG_FILE = SCRIPT_DIR / "config_proyectos.json"
+DATA_FILE = SCRIPT_DIR / "respuestas_percentiles.csv"
 ADMIN_PASSWORD = "Hola1234"
 
 def load_config():
     """Carga la configuración de proyectos"""
-    if os.path.exists(CONFIG_FILE):
+    if CONFIG_FILE.exists():
         with open(CONFIG_FILE, 'r') as f:
             return json.load(f)
     return {"proyectos": []}
@@ -73,7 +75,7 @@ def get_proyectos_activos(config):
 def load_responses(proyecto_id=None, drop_personal=True):
     """Carga las respuestas del CSV, opcionalmente filtradas por proyecto.
     """
-    if os.path.exists(DATA_FILE):
+    if DATA_FILE.exists():
         df = pd.read_csv(DATA_FILE)
         if proyecto_id:
             df = df[df['Proyecto'] == proyecto_id]
@@ -403,268 +405,277 @@ for idx, proyecto in enumerate(proyectos_activos):
 with tabs[-1]:
     st.write("## 📊 Análisis Completo de Percentiles")
     
-    # Selector de proyecto para análisis
-    opciones_analisis = [f"{p['nombre']} ({p['subtipo']})" for p in proyectos_activos]
-    proyecto_seleccionado_idx = st.selectbox(
-        "Selecciona un proyecto para análisis detallado",
-        range(len(opciones_analisis)),
-        format_func=lambda i: opciones_analisis[i],
-        key="proyecto_analisis"
-    )
+    # Mostrar todos los proyectos (activos e inactivos) para análisis
+    todos_proyectos = sorted(config['proyectos'], key=lambda x: x["orden"])
     
-    proyecto_seleccionado = proyectos_activos[proyecto_seleccionado_idx]
-    proyecto_id = proyecto_seleccionado['id']
-    p50_valor = proyecto_seleccionado['p50']
-    unidad = proyecto_seleccionado['unidad']
-    tipo = proyecto_seleccionado['tipo']
-    titulo_tipo = "Costos" if tipo == 'costos' else "Plazos"
-    
-    df_proyecto = load_responses(proyecto_id)
-    
-    if len(df_proyecto) == 0:
-        st.info(f"📭 Aún no hay respuestas para {proyecto_seleccionado['nombre']}. ¡Sé el primero en responder!")
+    if not todos_proyectos:
+        st.warning("⚠️ No hay proyectos configurados.")
     else:
-        st.divider()
-        
-        # ========== MÉTRICAS PRINCIPALES ==========
-        st.write("### 📈 Métricas de Estimaciones")
-        
-        # Mostrar métricas principales y el mapeo medio de percentil (si existe)
-        col1, col2, col3 = st.columns(3)
-
-        with col1:
-            st.metric("Total participantes", len(df_proyecto))
-        with col2:
-            st.metric(f"P50 objetivo", f"{p50_valor} {unidad}")
-
-        # Promedio del percentil que los usuarios asignaron al Valor Esperado
-        avg_percentil = None
-        if 'P50_percentil' in df_proyecto.columns:
-            try:
-                avg_percentil = df_proyecto['P50_percentil'].astype(float).mean()
-            except Exception:
-                avg_percentil = None
-
-        with col3:
-            if avg_percentil is not None and not pd.isna(avg_percentil):
-                st.metric("P50 - mapeo medio (percentil)", f"{avg_percentil:.1f}")
-            else:
-                st.metric("P50 - mapeo medio (percentil)", "n/a")
-        
-        st.divider()
-        
-        # ========== ANÁLISIS POR PERCENTIL ==========
-        st.write("### 📊 Distribución de Estimaciones")
-
-        col1, col2 = st.columns(2)
-
-        # Gráfico 1: Histograma de P1 y P10
-        with col1:
-            st.write("#### Percentiles Bajos (P1 y P10)")
-
-            fig1 = go.Figure()
-            fig1.add_trace(go.Histogram(
-                x=df_proyecto['P1'],
-                name='P1',
-                opacity=0.7,
-                marker_color='#3498DB',
-                nbinsx=15
-            ))
-            if 'P10' in df_proyecto.columns:
-                fig1.add_trace(go.Histogram(
-                    x=df_proyecto['P10'],
-                    name='P10',
-                    opacity=0.7,
-                    marker_color='#2ECC71',
-                    nbinsx=15
-                ))
-
-            fig1.add_vline(x=p50_valor, line_dash="dash", line_color="red",
-                          annotation_text=f"P50: {p50_valor}", annotation_position="top right")
-
-            fig1.update_layout(
-                height=400,
-                barmode='overlay',
-                xaxis_title=f'Estimación ({unidad})',
-                yaxis_title='Cantidad de Participantes'
-            )
-
-            st.plotly_chart(fig1, use_container_width=True)
-
-        # Gráfico 2: Histograma de P90 y P99
-        with col2:
-            st.write("#### Percentiles Altos (P90 y P99)")
-
-            fig2 = go.Figure()
-            if 'P90' in df_proyecto.columns:
-                fig2.add_trace(go.Histogram(
-                    x=df_proyecto['P90'],
-                    name='P90',
-                    opacity=0.7,
-                    marker_color='#F39C12',
-                    nbinsx=15
-                ))
-
-            fig2.add_trace(go.Histogram(
-                x=df_proyecto['P99'],
-                name='P99',
-                opacity=0.7,
-                marker_color='#E74C3C',
-                nbinsx=15
-            ))
-
-            fig2.add_vline(x=p50_valor, line_dash="dash", line_color="red",
-                          annotation_text=f"P50: {p50_valor}", annotation_position="top right")
-
-            fig2.update_layout(
-                height=400,
-                barmode='overlay',
-                xaxis_title=f'Estimación ({unidad})',
-                yaxis_title='Cantidad de Participantes'
-            )
-
-            st.plotly_chart(fig2, use_container_width=True)
-
-        # ===== Estadísticas del mapeo de P50 (percentil) =====
-        if 'P50_percentil' in df_proyecto.columns:
-            try:
-                pct = pd.to_numeric(df_proyecto['P50_percentil'], errors='coerce').dropna()
-            except Exception:
-                pct = pd.Series(dtype=float)
-
-            if len(pct) > 0:
-                st.divider()
-                st.write("### 📌 Estadísticas del mapeo de P50 (percentil)")
-                c1, c2, c3, c4 = st.columns(4)
-                with c1:
-                    st.metric("Respuestas", len(pct))
-                with c2:
-                    st.metric("Promedio (percentil)", f"{pct.mean():.1f}")
-                with c3:
-                    st.metric("Mediana (percentil)", f"{pct.median():.1f}")
-                with c4:
-                    st.metric("Desv. est.", f"{pct.std():.1f}")
-
-                fig_pct = go.Figure()
-                fig_pct.add_trace(go.Histogram(
-                    x=pct,
-                    nbinsx=15,
-                    marker_color='#9b59b6',
-                    opacity=0.8
-                ))
-                fig_pct.update_layout(
-                    height=300,
-                    xaxis_title='Percentil asignado',
-                    yaxis_title='Cantidad'
-                )
-                st.plotly_chart(fig_pct, use_container_width=True)
-            else:
-                st.info("No hay mapeos de percentil registrados para el P50 en este proyecto.")
-        
-        st.divider()
-        
-        # ========== GRÁFICO COMPARATIVO ==========
-        st.write(f"### 📉 Comparativa de Percentiles vs P50 ({titulo_tipo})")
-        
-        # Calcular promedios (P1, P10, P50 fijo del proyecto, P90, P99)
-        promedios = {
-            'P1': df_proyecto['P1'].mean(),
-            'P10': df_proyecto['P10'].mean() if 'P10' in df_proyecto.columns else float('nan'),
-            # P50 es el Valor Esperado del proyecto (no es una media de respuestas)
-            'P50': float(p50_valor),
-            'P90': df_proyecto['P90'].mean() if 'P90' in df_proyecto.columns else float('nan'),
-            'P99': df_proyecto['P99'].mean()
-        }
-        
-        fig3 = go.Figure()
-        
-        fig3.add_trace(go.Bar(
-            x=list(promedios.keys()),
-            y=list(promedios.values()),
-            marker_color=['#3498DB', '#F39C12', '#E74C3C'],
-            text=[f'{v:.1f}' if not pd.isna(v) else 'n/a' for v in promedios.values()],
-            textposition='auto',
-            name='Promedio Estimado'
-        ))
-
-        fig3.add_hline(y=p50_valor, line_dash="dash", line_color="red",
-                      annotation_text=f"P50 Objetivo: {p50_valor} {unidad}")
-        
-        fig3.update_layout(
-            height=400,
-            xaxis_title='Percentil',
-            yaxis_title=f'Estimación ({unidad})',
-            showlegend=False
+        # Selector de proyecto para análisis
+        opciones_analisis = [f"{p['nombre']} ({p['subtipo']})" + (" [INACTIVO]" if not p['activo'] else "") for p in todos_proyectos]
+        proyecto_seleccionado_idx = st.selectbox(
+            "Selecciona un proyecto para análisis detallado",
+            range(len(opciones_analisis)),
+            format_func=lambda i: opciones_analisis[i],
+            key="proyecto_analisis"
         )
         
-        st.plotly_chart(fig3, use_container_width=True)
+        proyecto_seleccionado = todos_proyectos[proyecto_seleccionado_idx]
+        proyecto_id = proyecto_seleccionado['id']
+        p50_valor = proyecto_seleccionado['p50']
+        unidad = proyecto_seleccionado['unidad']
+        tipo = proyecto_seleccionado['tipo']
+        titulo_tipo = "Costos" if tipo == 'costos' else "Plazos"
         
-        st.divider()
+        # Mostrar indicador si el proyecto está inactivo
+        if not proyecto_seleccionado['activo']:
+            st.info(f"ℹ️ Este proyecto está **deshabilitado** pero puedes ver su análisis de datos.")
         
-        # ========== ESTADÍSTICAS DETALLADAS ==========
-        st.write("### 📋 Estadísticas por Percentil")
+        df_proyecto = load_responses(proyecto_id)
+        
+        if len(df_proyecto) == 0:
+            st.warning(f"📭 Aún no hay respuestas para {proyecto_seleccionado['nombre']}.")
+        else:
+            st.divider()
+            
+            # ========== MÉTRICAS PRINCIPALES ==========
+            st.write("### 📈 Métricas de Estimaciones")
+            
+            # Mostrar métricas principales y el mapeo medio de percentil (si existe)
+            col1, col2, col3 = st.columns(3)
 
-        stats_data = {
-            'Percentil': ['P1', 'P10', 'P90', 'P99'],
-            'Mín': [
-                df_proyecto['P1'].min(),
-                df_proyecto['P10'].min() if 'P10' in df_proyecto.columns else float('nan'),
-                df_proyecto['P90'].min() if 'P90' in df_proyecto.columns else float('nan'),
-                df_proyecto['P99'].min()
-            ],
-            'Promedio': [
-                df_proyecto['P1'].mean(),
-                df_proyecto['P10'].mean() if 'P10' in df_proyecto.columns else float('nan'),
-                df_proyecto['P90'].mean() if 'P90' in df_proyecto.columns else float('nan'),
-                df_proyecto['P99'].mean()
-            ],
-            'Mediana': [
-                df_proyecto['P1'].median(),         
-                df_proyecto['P10'].median() if 'P10' in df_proyecto.columns else float('nan'),
-                df_proyecto['P90'].median() if 'P90' in df_proyecto.columns else float('nan'),
-                df_proyecto['P99'].median()
-            ],
-            'Máx': [
-                df_proyecto['P1'].max(),
-                df_proyecto['P10'].max() if 'P10' in df_proyecto.columns else float('nan'),
-                df_proyecto['P90'].max() if 'P90' in df_proyecto.columns else float('nan'),
-                df_proyecto['P99'].max()
-            ],
-            'Desv. Est.': [
-                df_proyecto['P1'].std(),
-                df_proyecto['P10'].std() if 'P10' in df_proyecto.columns else float('nan'),
-                df_proyecto['P90'].std() if 'P90' in df_proyecto.columns else float('nan'),
-                df_proyecto['P99'].std()
-            ]
-        }
-        
-        stats_df = pd.DataFrame(stats_data)
-        st.dataframe(stats_df, use_container_width=True, hide_index=True)
-        
-        st.divider()
-        
-        # ========== TABLA DE DATOS COMPLETOS ==========
-        
-        # Tabla de datos completos: solo visible para admin
-        if st.session_state.admin_authenticated:
-            st.write("### 📊 Datos Detallados")
-            st.dataframe(
-                df_proyecto,
-                use_container_width=True,
-                hide_index=True
+            with col1:
+                st.metric("Total participantes", len(df_proyecto))
+            with col2:
+                st.metric(f"P50 objetivo", f"{p50_valor} {unidad}")
+
+            # Promedio del percentil que los usuarios asignaron al Valor Esperado
+            avg_percentil = None
+            if 'P50_percentil' in df_proyecto.columns:
+                try:
+                    avg_percentil = df_proyecto['P50_percentil'].astype(float).mean()
+                except Exception:
+                    avg_percentil = None
+
+            with col3:
+                if avg_percentil is not None and not pd.isna(avg_percentil):
+                    st.metric("P50 - mapeo medio (percentil)", f"{avg_percentil:.1f}")
+                else:
+                    st.metric("P50 - mapeo medio (percentil)", "n/a")
+            
+            st.divider()
+            
+            # ========== ANÁLISIS POR PERCENTIL ==========
+            st.write("### 📊 Distribución de Estimaciones")
+
+            col1, col2 = st.columns(2)
+
+            # Gráfico 1: Histograma de P1 y P10
+            with col1:
+                st.write("#### Percentiles Bajos (P1 y P10)")
+
+                fig1 = go.Figure()
+                fig1.add_trace(go.Histogram(
+                    x=df_proyecto['P1'],
+                    name='P1',
+                    opacity=0.7,
+                    marker_color='#3498DB',
+                    nbinsx=15
+                ))
+                if 'P10' in df_proyecto.columns:
+                    fig1.add_trace(go.Histogram(
+                        x=df_proyecto['P10'],
+                        name='P10',
+                        opacity=0.7,
+                        marker_color='#2ECC71',
+                        nbinsx=15
+                    ))
+
+                fig1.add_vline(x=p50_valor, line_dash="dash", line_color="red",
+                              annotation_text=f"P50: {p50_valor}", annotation_position="top right")
+
+                fig1.update_layout(
+                    height=400,
+                    barmode='overlay',
+                    xaxis_title=f'Estimación ({unidad})',
+                    yaxis_title='Cantidad de Participantes'
+                )
+
+                st.plotly_chart(fig1, use_container_width=True)
+
+            # Gráfico 2: Histograma de P90 y P99
+            with col2:
+                st.write("#### Percentiles Altos (P90 y P99)")
+
+                fig2 = go.Figure()
+                if 'P90' in df_proyecto.columns:
+                    fig2.add_trace(go.Histogram(
+                        x=df_proyecto['P90'],
+                        name='P90',
+                        opacity=0.7,
+                        marker_color='#F39C12',
+                        nbinsx=15
+                    ))
+
+                fig2.add_trace(go.Histogram(
+                    x=df_proyecto['P99'],
+                    name='P99',
+                    opacity=0.7,
+                    marker_color='#E74C3C',
+                    nbinsx=15
+                ))
+
+                fig2.add_vline(x=p50_valor, line_dash="dash", line_color="red",
+                              annotation_text=f"P50: {p50_valor}", annotation_position="top right")
+
+                fig2.update_layout(
+                    height=400,
+                    barmode='overlay',
+                    xaxis_title=f'Estimación ({unidad})',
+                    yaxis_title='Cantidad de Participantes'
+                )
+
+                st.plotly_chart(fig2, use_container_width=True)
+
+        # ===== Estadísticas del mapeo de P50 (percentil) =====
+            if 'P50_percentil' in df_proyecto.columns:
+                try:
+                    pct = pd.to_numeric(df_proyecto['P50_percentil'], errors='coerce').dropna()
+                except Exception:
+                    pct = pd.Series(dtype=float)
+
+                if len(pct) > 0:
+                    st.divider()
+                    st.write("### 📌 Estadísticas del mapeo de P50 (percentil)")
+                    c1, c2, c3, c4 = st.columns(4)
+                    with c1:
+                        st.metric("Respuestas", len(pct))
+                    with c2:
+                        st.metric("Promedio (percentil)", f"{pct.mean():.1f}")
+                    with c3:
+                        st.metric("Mediana (percentil)", f"{pct.median():.1f}")
+                    with c4:
+                        st.metric("Desv. est.", f"{pct.std():.1f}")
+
+                    fig_pct = go.Figure()
+                    fig_pct.add_trace(go.Histogram(
+                        x=pct,
+                        nbinsx=15,
+                        marker_color='#9b59b6',
+                        opacity=0.8
+                    ))
+                    fig_pct.update_layout(
+                        height=300,
+                        xaxis_title='Percentil asignado',
+                        yaxis_title='Cantidad'
+                    )
+                    st.plotly_chart(fig_pct, use_container_width=True)
+                else:
+                    st.info("No hay mapeos de percentil registrados para el P50 en este proyecto.")
+            
+            st.divider()
+            
+            # ========== GRÁFICO COMPARATIVO ==========
+            st.write(f"### 📉 Comparativa de Percentiles vs P50 ({titulo_tipo})")
+            
+            # Calcular promedios (P1, P10, P50 fijo del proyecto, P90, P99)
+            promedios = {
+                'P1': df_proyecto['P1'].mean(),
+                'P10': df_proyecto['P10'].mean() if 'P10' in df_proyecto.columns else float('nan'),
+                # P50 es el Valor Esperado del proyecto (no es una media de respuestas)
+                'P50': float(p50_valor),
+                'P90': df_proyecto['P90'].mean() if 'P90' in df_proyecto.columns else float('nan'),
+                'P99': df_proyecto['P99'].mean()
+            }
+            
+            fig3 = go.Figure()
+            
+            fig3.add_trace(go.Bar(
+                x=list(promedios.keys()),
+                y=list(promedios.values()),
+                marker_color=['#3498DB', '#F39C12', '#E74C3C'],
+                text=[f'{v:.1f}' if not pd.isna(v) else 'n/a' for v in promedios.values()],
+                textposition='auto',
+                name='Promedio Estimado'
+            ))
+
+            fig3.add_hline(y=p50_valor, line_dash="dash", line_color="red",
+                          annotation_text=f"P50 Objetivo: {p50_valor} {unidad}")
+            
+            fig3.update_layout(
+                height=400,
+                xaxis_title='Percentil',
+                yaxis_title=f'Estimación ({unidad})',
+                showlegend=False
             )
+            
+            st.plotly_chart(fig3, use_container_width=True)
+            
+            st.divider()
+            
+            # ========== ESTADÍSTICAS DETALLADAS ==========
+            st.write("### 📋 Estadísticas por Percentil")
 
-        # Botón de descarga: solo para admin, descarga la base completa (todos los proyectos)
-        if st.session_state.admin_authenticated:
-            full_df = load_responses(proyecto_id=None, drop_personal=False)
-            csv_all = full_df.to_csv(index=False)
-            st.download_button(
-                label=f"📥 Descargar base completa (CSV)",
-                data=csv_all,
-                file_name=f"estimaciones_completa.csv",
-                mime="text/csv"
-            )
+            stats_data = {
+                'Percentil': ['P1', 'P10', 'P90', 'P99'],
+                'Mín': [
+                    df_proyecto['P1'].min(),
+                    df_proyecto['P10'].min() if 'P10' in df_proyecto.columns else float('nan'),
+                    df_proyecto['P90'].min() if 'P90' in df_proyecto.columns else float('nan'),
+                    df_proyecto['P99'].min()
+                ],
+                'Promedio': [
+                    df_proyecto['P1'].mean(),
+                    df_proyecto['P10'].mean() if 'P10' in df_proyecto.columns else float('nan'),
+                    df_proyecto['P90'].mean() if 'P90' in df_proyecto.columns else float('nan'),
+                    df_proyecto['P99'].mean()
+                ],
+                'Mediana': [
+                    df_proyecto['P1'].median(),         
+                    df_proyecto['P10'].median() if 'P10' in df_proyecto.columns else float('nan'),
+                    df_proyecto['P90'].median() if 'P90' in df_proyecto.columns else float('nan'),
+                    df_proyecto['P99'].median()
+                ],
+                'Máx': [
+                    df_proyecto['P1'].max(),
+                    df_proyecto['P10'].max() if 'P10' in df_proyecto.columns else float('nan'),
+                    df_proyecto['P90'].max() if 'P90' in df_proyecto.columns else float('nan'),
+                    df_proyecto['P99'].max()
+                ],
+                'Desv. Est.': [
+                    df_proyecto['P1'].std(),
+                    df_proyecto['P10'].std() if 'P10' in df_proyecto.columns else float('nan'),
+                    df_proyecto['P90'].std() if 'P90' in df_proyecto.columns else float('nan'),
+                    df_proyecto['P99'].std()
+                ]
+            }
+            
+            stats_df = pd.DataFrame(stats_data)
+            st.dataframe(stats_df, use_container_width=True, hide_index=True)
+            
+            st.divider()
+            
+            # ========== TABLA DE DATOS COMPLETOS ==========
+            
+            # Tabla de datos completos: solo visible para admin
+            if st.session_state.admin_authenticated:
+                st.write("### 📊 Datos Detallados")
+                st.dataframe(
+                    df_proyecto,
+                    use_container_width=True,
+                    hide_index=True
+                )
 
+            # Botón de descarga: solo para admin, descarga la base completa (todos los proyectos)
+            if st.session_state.admin_authenticated:
+                full_df = load_responses(proyecto_id=None, drop_personal=False)
+                csv_all = full_df.to_csv(index=False)
+                st.download_button(
+                    label=f"📥 Descargar base completa (CSV)",
+                    data=csv_all,
+                    file_name=f"estimaciones_completa.csv",
+                    mime="text/csv"
+                )
 # ========== PANEL DE CONTROL (Admin) ==========
 if st.session_state.show_admin and st.session_state.admin_authenticated:
     st.divider()
