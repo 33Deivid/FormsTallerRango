@@ -76,7 +76,7 @@ def load_responses(proyecto_id=None, drop_personal=True):
     """Carga las respuestas del CSV, opcionalmente filtradas por proyecto.
     """
     if DATA_FILE.exists():
-        df = pd.read_csv(str(DATA_FILE))
+        df = pd.read_csv(DATA_FILE)
         if proyecto_id:
             df = df[df['Proyecto'] == proyecto_id]
         return df
@@ -106,7 +106,7 @@ def save_response(proyecto_id, name, p1,p10,p90, p99, p50_percentil, comentarios
         df = load_responses(proyecto_id=None, drop_personal=False)
         # append keeping columns consistent
         df = pd.concat([df, pd.DataFrame([new_data])], ignore_index=True)
-        df.to_csv(str(DATA_FILE), index=False)
+        df.to_csv(DATA_FILE, index=False)
         return True
     except Exception:
         return False
