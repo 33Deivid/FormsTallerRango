@@ -76,7 +76,13 @@ def load_responses(proyecto_id=None, drop_personal=True):
     """Carga las respuestas del CSV, opcionalmente filtradas por proyecto.
     """
     if DATA_FILE.exists():
-        df = pd.read_csv(DATA_FILE)
+        try:
+            df = pd.read_csv(str(DATA_FILE), encoding='utf-8-sig')
+        except (UnicodeDecodeError, pd.errors.ParserError):
+            try:
+                df = pd.read_csv(str(DATA_FILE), encoding='latin-1')
+            except:
+                df = pd.read_csv(str(DATA_FILE), encoding='iso-8859-1')
         if proyecto_id:
             df = df[df['Proyecto'] == proyecto_id]
         return df
@@ -106,7 +112,7 @@ def save_response(proyecto_id, name, p1,p10,p90, p99, p50_percentil, comentarios
         df = load_responses(proyecto_id=None, drop_personal=False)
         # append keeping columns consistent
         df = pd.concat([df, pd.DataFrame([new_data])], ignore_index=True)
-        df.to_csv(DATA_FILE, index=False)
+        df.to_csv(str(DATA_FILE), index=False, encoding='utf-8-sig')
         return True
     except Exception:
         return False
@@ -717,7 +723,7 @@ if st.session_state.show_admin and st.session_state.admin_authenticated:
             with colc1:
                 if st.button("⚠️ CONFIRMAR BORRADO (IRREVERSIBLE)", key="confirm_delete_root", use_container_width=True):
                     empty = pd.DataFrame(columns=['Timestamp','Proyecto','Nombre o Pseudónimo','P1','P10','P90','P99','P50_percentil','Comentarios'])
-                    empty.to_csv(str(DATA_FILE), index=False)
+                    empty.to_csv(str(DATA_FILE), index=False, encoding='utf-8-sig')
                     st.success("✅ Datos borrados. Archivo reiniciado.")
                     st.session_state.confirm_delete = False
                     st.rerun()
