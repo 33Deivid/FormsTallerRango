@@ -7,7 +7,7 @@
       "tipo": "costos",
       "unidad": "MUSD",
       "p50": 24.3,
-      "activo": true,
+      "activo": false,
       "orden": 1,
       "limite_inferior": 10,
       "limite_superior": 40
@@ -43,7 +43,7 @@
       "tipo": "costos",
       "unidad": "MUSD",
       "p50": 45.2,
-      "activo": false,
+      "activo": true,
       "orden": 4,
       "limite_inferior": 20,
       "limite_superior": 80
