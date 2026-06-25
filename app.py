@@ -77,12 +77,19 @@ def load_responses(proyecto_id=None, drop_personal=True):
     """
     if DATA_FILE.exists():
         try:
-            df = pd.read_csv(str(DATA_FILE), encoding='utf-8-sig')
-        except (UnicodeDecodeError, pd.errors.ParserError):
+            # Intenta con utf-8-sig primero (mejor para CSV con BOM)
+            df = pd.read_csv(str(DATA_FILE), encoding='utf-8-sig', engine='python', on_bad_lines='skip')
+        except Exception as e1:
             try:
-                df = pd.read_csv(str(DATA_FILE), encoding='latin-1')
-            except:
-                df = pd.read_csv(str(DATA_FILE), encoding='iso-8859-1')
+                # Si falla, intenta con latin-1
+                df = pd.read_csv(str(DATA_FILE), encoding='latin-1', engine='python', on_bad_lines='skip')
+            except Exception as e2:
+                try:
+                    # Si falla, intenta con utf-8 sin BOM
+                    df = pd.read_csv(str(DATA_FILE), encoding='utf-8', engine='python', on_bad_lines='skip')
+                except Exception as e3:
+                    # Última opción: iso-8859-1
+                    df = pd.read_csv(str(DATA_FILE), encoding='iso-8859-1', engine='python', on_bad_lines='skip')
         if proyecto_id:
             df = df[df['Proyecto'] == proyecto_id]
         return df
