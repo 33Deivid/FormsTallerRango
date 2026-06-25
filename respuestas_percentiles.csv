@@ -1,2 +1,98 @@
-Timestamp,Proyecto,P1,P50,P99,Comentarios
-2026-06-23 19:11:35,Paquete_1,10.0,35.0,40.0,
+Timestamp,Proyecto,P1,P10,P90,P99,P50_percentil,Comentarios,Nombre
+24-06-2026 20:23:27,proyecto_7,9.0,11.0,14.0,16.0,60.0,,ND
+24-06-2026 20:25:20,proyecto_7,9.0,9.0,12.0,12.0,65.0,,Lily
+24-06-2026 20:26:22,proyecto_7,11.0,11.5,14.0,16.0,50.0,,David
+24-06-2026 20:31:16,proyecto_7,10.0,11.0,14.0,16.0,50.0,,Funcional 1
+24-06-2026 20:31:33,proyecto_7,10.0,11.0,14.0,15.0,45.0,,Javier
+24-06-2026 20:31:48,proyecto_7,10.0,11.0,13.0,15.0,50.0,,Guillermo
+24-06-2026 20:31:49,proyecto_7,10.0,12.0,14.0,20.0,60.0,,HIR
+24-06-2026 20:31:57,proyecto_7,9.0,10.0,15.0,17.0,50.0,Peor caso por restricciones del dueÃ±o del area para ingresar a materializar obras a cada sector,EA
+24-06-2026 20:32:00,proyecto_7,9.0,9.0,20.0,20.0,50.0,Aun en indefinicionws del alcance a ejecutar e itemizado,Fdo
+24-06-2026 20:32:20,proyecto_7,11.0,11.5,14.0,16.0,50.0,,David
+24-06-2026 20:32:29,proyecto_7,11.0,11.5,14.0,15.0,50.0,,CPI
+24-06-2026 20:32:33,proyecto_7,11.0,11.5,14.0,15.0,50.0,,JC
+24-06-2026 20:32:35,proyecto_7,11.0,11.5,14.0,15.0,50.0,,Cherie
+24-06-2026 20:32:59,proyecto_7,11.0,11.5,14.0,15.0,50.0,Se consideran cambios en licitacion/AdjudicaciÃ³n de contrato CC-145 ,Matias
+24-06-2026 20:34:04,proyecto_7,11.0,12.0,17.0,18.0,35.0,Riesgos en cumplimiento de entrega de Ã¡reas por DCh. Riesgos en integraciÃ³n de equipos Riesgos en puesta en marcha de equipos",Cholo
+24-06-2026 20:35:32,proyecto_7,11.0,11.5,14.0,16.0,50.0,falta el anÃ¡lisis de la licitaciÃ³n, se ajustarÃ¡ el modelo determinÃ­stico,F M
+24-06-2026 20:47:37,Paquete_1,20.0,22.0,30.0,34.7,50.0,,David
+24-06-2026 20:57:31,Paquete_1,18.0,18.0,28.0,40.0,50.0,,Lily
+24-06-2026 20:57:40,Paquete_1,18.0,18.0,28.0,28.0,50.0,,Lily
+24-06-2026 20:59:18,Paquete_1,18.0,20.0,30.0,32.0,60.0,,EA
+24-06-2026 20:59:20,Paquete_1,18.0,21.0,28.0,40.0,50.0,,HIR
+24-06-2026 20:59:20,Paquete_1,15.0,20.0,26.0,28.0,50.0,,CPI
+24-06-2026 20:59:24,Paquete_1,15.0,20.0,26.0,28.0,50.0,,JC
+24-06-2026 20:59:26,Paquete_1,20.0,22.0,26.0,28.0,50.0,,Guillermo
+24-06-2026 20:59:36,Paquete_1,17.0,22.0,26.0,28.0,50.0,,ND
+24-06-2026 20:59:48,Paquete_1,20.0,24.0,25.0,26.0,50.0,,D10S
+24-06-2026 20:59:52,Paquete_1,20.0,22.0,30.0,34.0,50.0,,Funcional 1
+24-06-2026 20:59:59,Paquete_1,20.0,21.5,27.0,30.0,50.4,,Cholo
+24-06-2026 21:00:10,Paquete_1,20.0,22.0,26.0,28.0,50.0,Impacto segÃºn posible incidentes,Fdo
+24-06-2026 21:00:14,Paquete_1,20.0,21.0,28.0,30.0,50.0,Considerando desplazamientos en programa evaluados en primera etapa del taller ,Matias
+24-06-2026 21:00:16,Paquete_1,22.0,24.0,25.0,30.0,60.0,,Guns
+24-06-2026 21:00:36,Paquete_1,20.0,21.5,27.0,30.0,65.0,,Cholo
+24-06-2026 21:00:38,Paquete_1,23.5,24.0,28.0,30.0,50.0,,F M
+24-06-2026 21:01:01,Paquete_1,20.0,22.0,30.0,34.7,50.0,,David
+24-06-2026 21:04:26,Paquete_2,21.0,21.0,30.0,30.0,50.0,,Lily
+24-06-2026 21:06:49,Paquete_2,18.0,19.0,23.0,24.0,50.0,,Funcional 1
+24-06-2026 21:09:56,Paquete_2,19.0,20.0,24.0,28.0,50.0,,ND
+24-06-2026 21:10:08,Paquete_2,20.0,20.5,22.0,23.0,50.0,,Jc
+24-06-2026 21:10:11,Paquete_2,18.0,20.0,25.0,30.0,55.0,,HIR
+24-06-2026 21:10:12,Paquete_2,19.0,20.0,23.0,26.0,50.0,,Guillermo
+24-06-2026 21:10:15,Paquete_2,21.0,21.0,26.0,30.0,50.0,Dependiente directo del tÃ©rmino del.pique,Fdo
+24-06-2026 21:10:24,Paquete_2,20.0,20.5,22.0,23.0,50.0,,CPI
+24-06-2026 21:10:30,Paquete_2,18.0,20.0,27.0,29.0,55.0,,EA
+24-06-2026 21:10:48,Paquete_2,19.0,21.0,22.0,30.0,40.0,,Guns
+24-06-2026 21:10:51,Paquete_2,19.5,20.5,22.0,23.5,50.0,,Cherie
+24-06-2026 21:11:05,Paquete_2,20.0,21.1,22.0,23.0,50.0,,ZaSa
+24-06-2026 21:12:00,Paquete_2,20.0,21.0,24.5,26.0,40.0,Riesgo que SALFA cobre compensaciÃ³n por faltas VP (ingenierÃ­a, suministro, etc),Cholo
+24-06-2026 21:12:13,Paquete_2,20.0,21.0,21.8,22.0,50.0,Considerando desviaciones en programa evaluados en etapa 1 del taller ,Matias
+24-06-2026 21:12:18,Paquete_2,20.0,21.0,22.0,23.0,50.0,,david
+24-06-2026 21:12:32,Paquete_2,20.5,21.0,23.5,24.0,50.0,,F M
+24-06-2026 21:16:10,Paquete_3,35.0,35.0,36.0,36.0,50.0,,Lily
+24-06-2026 21:20:04,Paquete_3,33.0,34.0,36.0,37.0,50.0,,CPI
+24-06-2026 21:20:11,Paquete_3,22.0,28.0,38.0,45.0,50.0,,ND
+24-06-2026 21:20:17,Paquete_3,31.0,33.5,38.0,40.0,50.0,,Guillermo
+24-06-2026 21:20:18,Paquete_3,33.0,34.0,36.0,37.0,50.0,,JC
+24-06-2026 21:20:21,Paquete_3,32.0,33.0,39.0,41.0,45.0,,Funcional 1
+24-06-2026 21:20:28,Paquete_3,35.0,35.0,40.0,40.0,50.0,Alcance aun no cerrado por el.cliente y re licitaciÃ³n ,Fdo
+24-06-2026 21:20:42,Paquete_3,24.0,26.0,42.0,46.0,60.0,,EA
+24-06-2026 21:20:50,Paquete_3,35.0,35.6,37.0,39.0,50.0,,NN
+24-06-2026 21:21:13,Paquete_3,30.0,35.0,45.0,50.0,60.0,,HIR
+24-06-2026 21:21:32,Paquete_3,34.6,35.0,37.8,38.0,50.0,,F M
+24-06-2026 21:21:37,Paquete_3,35.0,35.1,36.0,37.0,50.0,Se considera  modificaciones en licitaciones/adjudicaciones,Matias
+24-06-2026 21:22:15,Paquete_3,33.0,34.0,36.0,37.0,50.0,,David
+24-06-2026 21:22:24,Paquete_3,35.0,35.0,40.0,50.0,50.0,,Guns
+24-06-2026 21:22:27,Paquete_3,30.0,32.0,40.0,42.0,40.0,Riesgos del contratista por compensaciÃ³n (ingenierÃ­as incompletas, suministros faltantes, falta de integraciÃ³n)Riesgo de permanencia para tÃ©rmino de detalles terminaciÃ³n.  Punch caminatas 3 con cliente  etc",Cholo
+24-06-2026 21:22:27,proyecto_5,8.0,10.0,11.0,14.0,50.0,,DM
+24-06-2026 21:22:27,proyecto_5,9.0,9.5,11.0,11.5,50.0,,LF
+24-06-2026 21:22:27,proyecto_5,10.0,10.0,11.0,12.0,45.0,,ND
+24-06-2026 21:22:27,proyecto_5,9.0,10.0,12.0,14.0,45.0,,ND
+24-06-2026 21:22:27,proyecto_5,8.0,9.0,11.0,12.0,50.0,,CG
+24-06-2026 21:22:27,proyecto_5,8.0,9.0,11.5,13.0,55.0,,CG
+24-06-2026 21:22:27,proyecto_5,9.0,9.0,12.0,13.0,50.0,,CP
+24-06-2026 21:22:27,proyecto_5,9.0,9.8,11.0,11.5,50.0,,JC
+24-06-2026 21:22:27,proyecto_5,9.0,9.5,11.0,12.0,50.0,,FR
+24-06-2026 21:22:27,proyecto_5,9.0,10.0,11.0,12.0,40.0,,EA
+24-06-2026 21:22:27,proyecto_5,9.0,9.5,11.0,12.0,45.0,,Cholo
+24-06-2026 21:22:27,proyecto_5,8.0,9.0,11.0,13.0,50.0,,Cholo
+24-06-2026 21:22:27,proyecto_5,9.0,9.5,12.0,13.0,50.0,,CGug
+24-06-2026 21:22:27,proyecto_5,9.5,10.0,11.0,11.8,50.0,,GS
+24-06-2026 21:22:27,proyecto_5,8.0,9.0,12.0,13.0,50.0,,NM
+24-06-2026 21:22:27,proyecto_5,8.0,9.0,11.0,12.0,50.0,,JL
+24-06-2026 21:22:27,proyecto_6,4.0,4.0,15.0,15.0,50.0,,lily
+24-06-2026 21:22:27,proyecto_6,4.0,4.0,6.0,6.0,65.0,,lily
+24-06-2026 21:22:27,proyecto_6,4.0,4.0,6.0,6.0,65.0,,lily
+24-06-2026 21:22:27,proyecto_6,5.0,6.0,7.0,8.0,50.0,,David
+24-06-2026 21:22:27,proyecto_6,4.5,5.5,8.0,9.0,52.0,,Funcional 1
+24-06-2026 21:22:27,proyecto_6,5.0,6.0,7.0,8.0,50.0,,JC
+24-06-2026 21:22:27,proyecto_6,4.0,4.5,6.5,7.0,65.0,,Javier Lopez
+24-06-2026 21:22:27,proyecto_6,4.1,4.5,7.0,9.0,50.0,,ND
+24-06-2026 21:22:27,proyecto_6,4.5,5.0,7.0,8.0,50.0,,Guillermo
+24-06-2026 21:22:27,proyecto_6,5.0,6.0,7.0,8.0,50.0,,Cherie
+24-06-2026 21:22:27,proyecto_6,5.0,6.0,7.0,8.0,50.0,,CPI
+24-06-2026 21:22:27,proyecto_6,4.5,5.0,7.0,9.0,50.0,,CPI
+24-06-2026 21:22:27,proyecto_6,5.0,5.0,8.0,8.0,50.0,,Fdo
+24-06-2026 21:22:27,proyecto_6,5.0,6.0,6.0,9.0,50.0,,Guns
+24-06-2026 21:22:27,proyecto_6,4.0,5.0,8.0,10.0,50.0,,Cholo
+
