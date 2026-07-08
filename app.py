@@ -225,7 +225,8 @@ proyectos_activos = get_proyectos_activos(config)
 
 if not proyectos_activos:
     st.warning("⚠️ No hay proyectos activos en este momento. Por favor intenta más tarde.")
-    st.stop()
+    if not st.session_state.admin_authenticated:
+        st.stop()
 
 # ========== TABS PRINCIPALES ==========
 

@@ -14,7 +14,7 @@
     },
     {
       "id": "Paquete_2",
-      "nombre": "P2: Ventilación de Extracción" ,
+      "nombre": "P2: Ventilación de Extracción",
       "subtipo": "Costos",
       "tipo": "costos",
       "unidad": "MUSD",
@@ -43,7 +43,7 @@
       "tipo": "costos",
       "unidad": "MUSD",
       "p50": 45.2,
-      "activo": true,
+      "activo": false,
       "orden": 4,
       "limite_inferior": 20,
       "limite_superior": 80
@@ -62,7 +62,7 @@
     },
     {
       "id": "proyecto_6",
-      "nombre": "P2: Ventilación de Extracción" ,
+      "nombre": "P2: Ventilación de Extracción",
       "subtipo": "Plazos",
       "tipo": "plazos",
       "unidad": "meses",
