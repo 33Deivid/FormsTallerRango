@@ -1,6 +1,18 @@
 {
   "proyectos": [
     {
+      "id": "Paquete_0",
+      "nombre": "P0: EJEMPLO FORMULARIO",
+      "subtipo": "Costos",
+      "tipo": "costos",
+      "unidad": "MUSD",
+      "p50": 7,
+      "activo": true,
+      "orden": 1,
+      "limite_inferior": 3,
+      "limite_superior": 10
+    },
+    {
       "id": "Paquete_1",
       "nombre": "P1: INGENIERÍA BÁSICA",
       "subtipo": "Costos",
@@ -92,7 +104,7 @@
       "unidad": "MUSD",
       "p50": 2.4,
       "activo": false,
-      "orden": 7,
+      "orden": 8,
       "limite_inferior": 1,
       "limite_superior": 4
     },
@@ -104,7 +116,7 @@
       "unidad": "MUSD",
       "p50": 0.6,
       "activo": false,
-      "orden": 7,
+      "orden": 9,
       "limite_inferior": 0,
       "limite_superior": 2.2
     },
@@ -116,7 +128,7 @@
       "unidad": "MUSD",
       "p50": 0.2,
       "activo": false,
-      "orden": 7,
+      "orden": 10,
       "limite_inferior": 0,
       "limite_superior": 1
     }
