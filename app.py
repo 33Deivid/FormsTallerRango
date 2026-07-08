@@ -161,7 +161,7 @@ if 'confirm_delete' not in st.session_state:
 col1, col2 = st.columns([3, 1])
 
 with col1:
-    st.markdown("<h1 class='main-title'>📊 Taller de Rango API N20MS10 - Estimador de Percentiles</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-title'>📊 Taller de Rango API N25MS49 - Estimador de Percentiles</h1>", unsafe_allow_html=True)
 
 with col2:
     # Botón para panel de control
