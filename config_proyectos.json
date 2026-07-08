@@ -2,87 +2,123 @@
   "proyectos": [
     {
       "id": "Paquete_1",
-      "nombre": "P1: Pique de extracción N°2",
+      "nombre": "P1: INGENIERÍA BÁSICA",
       "subtipo": "Costos",
       "tipo": "costos",
       "unidad": "MUSD",
-      "p50": 24.3,
+      "p50": 6.5,
       "activo": false,
       "orden": 1,
-      "limite_inferior": 10,
-      "limite_superior": 40
+      "limite_inferior": 4,
+      "limite_superior": 10
     },
     {
       "id": "Paquete_2",
-      "nombre": "P2: Ventilación de Extracción",
+      "nombre": "P2: ESTUDIOS ESPECIALES",
       "subtipo": "Costos",
       "tipo": "costos",
       "unidad": "MUSD",
-      "p50": 21.1,
+      "p50": 1.7,
       "activo": false,
       "orden": 2,
-      "limite_inferior": 15,
-      "limite_superior": 30
+      "limite_inferior": 1,
+      "limite_superior": 4
     },
     {
       "id": "Paquete_3",
-      "nombre": "P3: Talleres de Equipos Móviles",
+      "nombre": "P3: CAPTURA DE INFORMACIÓN",
       "subtipo": "Costos",
       "tipo": "costos",
       "unidad": "MUSD",
-      "p50": 35.6,
+      "p50": 0.2,
       "activo": false,
       "orden": 3,
-      "limite_inferior": 20,
-      "limite_superior": 50
+      "limite_inferior": 0,
+      "limite_superior": 2
     },
     {
       "id": "Paquete_4",
-      "nombre": "P4: Indirectos de Proyecto",
+      "nombre": "P4: PERMISOLOGÍA / SUSTENTABILIDAD",
       "subtipo": "Costos",
       "tipo": "costos",
       "unidad": "MUSD",
-      "p50": 45.2,
+      "p50": 0,
       "activo": false,
       "orden": 4,
-      "limite_inferior": 20,
-      "limite_superior": 80
+      "limite_inferior": 0,
+      "limite_superior": 5
     },
     {
       "id": "proyecto_5",
-      "nombre": "P1: Pique de extracción N°2",
-      "subtipo": "Plazos",
-      "tipo": "plazos",
-      "unidad": "meses",
-      "p50": 10,
+      "nombre": "P5: PRUBAS PILOTO SOLUCIÓN POLVO",
+      "subtipo": "Costos",
+      "tipo": "costos",
+      "unidad": "MUSD",
+      "p50": 0.7,
       "activo": false,
       "orden": 5,
-      "limite_inferior": 7,
-      "limite_superior": 20
+      "limite_inferior": 0,
+      "limite_superior": 2
     },
     {
       "id": "proyecto_6",
-      "nombre": "P2: Ventilación de Extracción",
-      "subtipo": "Plazos",
-      "tipo": "plazos",
-      "unidad": "meses",
-      "p50": 6,
+      "nombre": "P6: SERVICIOS DE APOYO",
+      "subtipo": "Costos",
+      "tipo": "costos",
+      "unidad": "MUSD",
+      "p50": 0.8,
       "activo": false,
       "orden": 6,
-      "limite_inferior": 4,
-      "limite_superior": 16
+      "limite_inferior": 0,
+      "limite_superior": 3
     },
     {
       "id": "proyecto_7",
-      "nombre": "P3: Talleres de Equipos Móviles",
-      "subtipo": "Plazos",
-      "tipo": "plazos",
-      "unidad": "meses",
-      "p50": 12,
+      "nombre": "P7: CONSULTORÍAS / OTROS",
+      "subtipo": "Costos",
+      "tipo": "costos",
+      "unidad": "MUSD",
+      "p50": 0.9,
       "activo": false,
       "orden": 7,
-      "limite_inferior": 9,
-      "limite_superior": 20
+      "limite_inferior": 0,
+      "limite_superior": 4
+    },
+    {
+      "id": "proyecto_8",
+      "nombre": "P8: COSTOS ADMINISTRACIÓN INTERNA",
+      "subtipo": "Costos",
+      "tipo": "costos",
+      "unidad": "MUSD",
+      "p50": 2.4,
+      "activo": false,
+      "orden": 7,
+      "limite_inferior": 1,
+      "limite_superior": 4
+    },
+    {
+      "id": "proyecto_9",
+      "nombre": "P9: INDIRECTOS VP",
+      "subtipo": "Costos",
+      "tipo": "costos",
+      "unidad": "MUSD",
+      "p50": 0.6,
+      "activo": false,
+      "orden": 7,
+      "limite_inferior": 0,
+      "limite_superior": 2.2
+    },
+    {
+      "id": "proyecto_10",
+      "nombre": "P10: COSTOS FUNCIONALES VP",
+      "subtipo": "Costos",
+      "tipo": "costos",
+      "unidad": "MUSD",
+      "p50": 0.2,
+      "activo": false,
+      "orden": 7,
+      "limite_inferior": 0,
+      "limite_superior": 1
     }
   ]
 }
