@@ -1,0 +1,88 @@
+{
+  "proyectos": [
+    {
+      "id": "Paquete_1",
+      "nombre": "P1: Pique de extracción N°2",
+      "subtipo": "Costos",
+      "tipo": "costos",
+      "unidad": "MUSD",
+      "p50": 24.3,
+      "activo": false,
+      "orden": 1,
+      "limite_inferior": 10,
+      "limite_superior": 40
+    },
+    {
+      "id": "Paquete_2",
+      "nombre": "P2: Ventilación de Extracción" ,
+      "subtipo": "Costos",
+      "tipo": "costos",
+      "unidad": "MUSD",
+      "p50": 21.1,
+      "activo": false,
+      "orden": 2,
+      "limite_inferior": 15,
+      "limite_superior": 30
+    },
+    {
+      "id": "Paquete_3",
+      "nombre": "P3: Talleres de Equipos Móviles",
+      "subtipo": "Costos",
+      "tipo": "costos",
+      "unidad": "MUSD",
+      "p50": 35.6,
+      "activo": false,
+      "orden": 3,
+      "limite_inferior": 20,
+      "limite_superior": 50
+    },
+    {
+      "id": "Paquete_4",
+      "nombre": "P4: Indirectos de Proyecto",
+      "subtipo": "Costos",
+      "tipo": "costos",
+      "unidad": "MUSD",
+      "p50": 45.2,
+      "activo": true,
+      "orden": 4,
+      "limite_inferior": 20,
+      "limite_superior": 80
+    },
+    {
+      "id": "proyecto_5",
+      "nombre": "P1: Pique de extracción N°2",
+      "subtipo": "Plazos",
+      "tipo": "plazos",
+      "unidad": "meses",
+      "p50": 10,
+      "activo": false,
+      "orden": 5,
+      "limite_inferior": 7,
+      "limite_superior": 20
+    },
+    {
+      "id": "proyecto_6",
+      "nombre": "P2: Ventilación de Extracción" ,
+      "subtipo": "Plazos",
+      "tipo": "plazos",
+      "unidad": "meses",
+      "p50": 6,
+      "activo": false,
+      "orden": 6,
+      "limite_inferior": 4,
+      "limite_superior": 16
+    },
+    {
+      "id": "proyecto_7",
+      "nombre": "P3: Talleres de Equipos Móviles",
+      "subtipo": "Plazos",
+      "tipo": "plazos",
+      "unidad": "meses",
+      "p50": 12,
+      "activo": false,
+      "orden": 7,
+      "limite_inferior": 9,
+      "limite_superior": 20
+    }
+  ]
+}
