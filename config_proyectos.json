@@ -45,8 +45,8 @@
       "p50": 0.2,
       "activo": false,
       "orden": 3,
-      "limite_inferior": 0,
-      "limite_superior": 2
+      "limite_inferior": 0.1,
+      "limite_superior": 1
     },
     {
       "id": "Paquete_4",
@@ -58,7 +58,7 @@
       "activo": false,
       "orden": 4,
       "limite_inferior": 0,
-      "limite_superior": 5
+      "limite_superior": 1.5
     },
     {
       "id": "proyecto_5",
@@ -70,7 +70,7 @@
       "activo": false,
       "orden": 5,
       "limite_inferior": 0,
-      "limite_superior": 2
+      "limite_superior": 1.5
     },
     {
       "id": "proyecto_6",
@@ -82,7 +82,7 @@
       "activo": false,
       "orden": 6,
       "limite_inferior": 0,
-      "limite_superior": 3
+      "limite_superior": 1.5
     },
     {
       "id": "proyecto_7",
@@ -93,8 +93,8 @@
       "p50": 0.9,
       "activo": false,
       "orden": 7,
-      "limite_inferior": 0,
-      "limite_superior": 4
+      "limite_inferior": 0.5,
+      "limite_superior": 2
     },
     {
       "id": "proyecto_8",
@@ -117,8 +117,8 @@
       "p50": 0.6,
       "activo": false,
       "orden": 9,
-      "limite_inferior": 0,
-      "limite_superior": 2.2
+      "limite_inferior": 0.2,
+      "limite_superior": 1
     },
     {
       "id": "proyecto_10",
@@ -129,7 +129,7 @@
       "p50": 0.2,
       "activo": false,
       "orden": 10,
-      "limite_inferior": 0,
+      "limite_inferior": 0.2,
       "limite_superior": 1
     }
   ]
