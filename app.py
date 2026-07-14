@@ -309,9 +309,9 @@ for idx, proyecto in enumerate(proyectos_activos):
             #Captura de percentil del valor esperado mostrado (P50) según criterio del usuario
             p50_percentil = st.number_input(
                 "¿Qué percentil consideras que corresponde al Valor Esperado mostrado?",
-                min_value=35.0,
-                max_value=65.0,
-                value=_clamp_one_decimal(50.0, 35.0, 65.0),
+                min_value=10.0,
+                max_value=90.0,
+                value=_clamp_one_decimal(50.0, 10.0, 90.0),
                 step=0.1,
                 format="%.1f",
                 key=f"p50_percentil_{proyecto['id']}",
